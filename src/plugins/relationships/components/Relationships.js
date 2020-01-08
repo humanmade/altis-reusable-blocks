@@ -15,8 +15,8 @@ import RelationshipItem from './RelationshipItem';
 
 const { relationshipsPerPage } = settings;
 
-const baseClassName = 'np-erb-relationships';
-const sidebarName = 'np-erb-relationships';
+const baseClassName = 'erb-relationships';
+const sidebarName = 'erb-relationships';
 
 class Relationships extends Component {
 	state = {
