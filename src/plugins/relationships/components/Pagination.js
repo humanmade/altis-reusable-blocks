@@ -3,15 +3,13 @@ import PropTypes from 'prop-types';
 import { PanelRow } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-const Pagination = props => {
-	const {
-		currentPage,
-		goToPrevPage,
-		goToNextPage,
-		totalPages,
-		totalItems,
-	} = props;
-
+const Pagination = ( {
+	currentPage,
+	goToPrevPage,
+	goToNextPage,
+	totalPages,
+	totalItems,
+} ) => {
 	if ( totalPages < 2 ) {
 		return null;
 	}

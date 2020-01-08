@@ -65,7 +65,7 @@ function insert_reusable_block_post_data( array $data ) : array {
 	}
 
 	if ( $data['post_type'] === BLOCK_POST_TYPE ) {
-		$data['post_name'] = sanitize_title_with_dashes( $data['post_title'] );
+		$data['post_name'] = sanitize_title_with_dashes( $data['post_title'] ) . '-block';
 	}
 
 	return $data;
