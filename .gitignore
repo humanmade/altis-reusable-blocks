@@ -1,0 +1,8 @@
+# Composer dependencies
+/vendor/
+
+# Node.js
+/node_modules/
+
+# Webpack
+/build/

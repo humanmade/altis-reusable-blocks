@@ -1,0 +1,280 @@
+import _debounce from 'lodash/debounce';
+import _deburr from 'lodash/deburr';
+import _isEqual from 'lodash/isequal';
+import _uniqBy from 'lodash/uniqby';
+import PropTypes from 'prop-types';
+
+import { BlockPreview } from '@wordpress/block-editor';
+import { createBlock } from '@wordpress/blocks';
+import { dispatch } from '@wordpress/data';
+import { Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
+
+import List from './List';
+import Filter from './Filter';
+
+import { fetchJson } from '../../../utils/fetch';
+
+class Edit extends Component {
+	state = {
+		blocksList: [],
+		filteredBlocksList: [],
+		hoveredId: null,
+		inputText: '',
+		isFetching: false,
+		searchCategory: this.props.postCategory,
+		searchKeyword: '',
+	};
+
+	constructor( props ) {
+		super( props );
+
+		// Debounce the fetchBlocks calls.
+		this.fetchBlocks = _debounce( this.fetchBlocks, 1000 );
+		this.abortController = new AbortController();
+	}
+
+	componentDidMount() {
+		const {
+			blocksList,
+			isFetching,
+		} = this.state;
+
+		if ( ! blocksList.length && ! isFetching ) {
+			this.fetchBlocks();
+		}
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		if (
+			this.props.postCategory !== prevProps.postCategory &&
+			this.state.searchCategory !== this.props.postCategory ) {
+			this.setState( { searchCategory: this.props.postCategory } );
+		}
+
+		if (
+			this.state.searchCategory !== prevState.searchCategory ||
+			this.state.searchKeyword !== prevState.searchKeyword &&
+			! this.state.isFetching
+		) {
+			this.fetchBlocks();
+		}
+	}
+
+	componentWillUnmount() {
+		this.abortController.abort();
+	}
+
+	/**
+	 * Fetch the most recently created blocks within the currently selected category for the post that is being edited.
+	 */
+	fetchBlocks = async () => {
+		const {
+			searchCategory,
+			searchKeyword,
+		} = this.state;
+
+		this.setState( {
+			isFetching: true,
+		} );
+
+		try {
+			const queryArgs = { per_page: 100 };
+
+			if ( searchKeyword ) {
+				queryArgs.search = searchKeyword;
+			}
+
+			if ( searchCategory ) {
+				queryArgs.categories = searchCategory;
+			}
+
+			const [ data ] = await fetchJson(
+				{
+					path: addQueryArgs( '/wp/v2/blocks', queryArgs ),
+					signal: this.abortController.signal,
+				},
+				[ 'x-wp-totalpages', 'x-wp-total' ]
+			);
+
+			this.updateBlocksList( data );
+		} catch ( e ) {
+			console.error( __( 'Error retrieving blocks.', 'enhanced-reusable-blocks' ) );
+			console.error( e );
+		}
+
+		this.setState( {
+			isFetching: false,
+		} );
+	};
+
+	/**
+	 * Normalize an array of blocks into the format we want them in.
+	 *
+	 * @param {Object[]} blocks - Array of blocks.
+	 *
+	 * @returns {Object[]} Normalized blocks.
+	 */
+	normalizeBlocks = ( blocks ) => {
+		return blocks.map( block => ( {
+			id: block.id,
+			title: block.title.raw,
+			content: block.content.raw,
+			categories: block.categories,
+		} ) );
+	};
+
+	/**
+	 * Update the Blocks List state object with a new list and normalize them.
+	 *
+	 * @param {Object[]} newBlocks - Array of new blocks fetched.
+	 */
+	updateBlocksList = ( newBlocks ) => {
+		const { blocksList } = this.state;
+
+		const newBlocksList = _uniqBy( [ ...blocksList, ...this.normalizeBlocks( newBlocks ) ], 'id' );
+
+		if ( ! _isEqual( newBlocksList, blocksList ) ) {
+			this.setState( {
+				blocksList: newBlocksList,
+			} );
+		}
+
+		this.filterBlocksList();
+	};
+
+	/**
+	 * Replace the current block with the `core/block` once we get the ID of that block.
+	 *
+	 * @param {Number} ref Reference ID for the reusable block.
+	 */
+	replaceWithCoreBlock = ( ref ) => {
+		const { clientId } = this.props;
+		const { replaceBlock } = dispatch( 'core/block-editor' );
+
+		replaceBlock( clientId, createBlock( 'core/block', { ref } ) );
+	};
+
+	/**
+	 * Converts the search keyword into a normalized keyword.
+	 *
+	 * @param {string} keyword The search keyword to normalize.
+	 *
+	 * @return {Array} The normalized search keywords with each keyword as an item in the array.
+	 */
+	normalizeSearchKeywords = ( keyword ) => {
+		// Disregard diacritics.
+		//  Input: "média"
+		keyword = _deburr( keyword );
+
+		// Accommodate leading slash, matching autocomplete expectations.
+		//  Input: "/media"
+		keyword = keyword.replace(/^\//, '');
+
+		// Strip leading and trailing whitespace.
+		//  Input: " media "
+		keyword = keyword.trim();
+
+		return keyword.split(' ');
+	};
+
+	/**
+	 * Filter blocks list based on the selected category and search keyword.
+	 */
+	filterBlocksList = () => {
+		const {
+			blocksList,
+			searchCategory,
+			searchKeyword,
+		} = this.state;
+
+		if ( ! searchKeyword && ! searchCategory ) {
+			return this.setState( { filteredBlocksList: blocksList } );
+		}
+
+		const filteredBlocksList = blocksList.filter( block => {
+			if ( searchCategory && ! block.categories.includes( searchCategory ) ) {
+				return false;
+			}
+
+			if ( searchKeyword ) {
+				// Split the keywords by spaces and then check each word.
+				const searchKeywords = this.normalizeSearchKeywords( searchKeyword );
+
+				return searchKeywords.every( keyword => {
+					// Check if keyword is excluded.
+					const isExcludedKeyword = keyword.charAt( 0 ) === '-';
+
+					// If it is excluded, remove the dash prefix.
+					const regex = new RegExp( isExcludedKeyword ? keyword.slice( 1 ) : keyword, 'ig' );
+
+					// Check that the post does not include the excluded keyword.
+					if ( isExcludedKeyword ) {
+						return ! regex.test( block.title ) && ! regex.test( block.content );
+					}
+
+					return regex.test( block.title ) || regex.test( block.content );
+				} );
+			}
+
+			return true;
+		} );
+
+		this.setState( { filteredBlocksList } );
+	};
+
+	render() {
+		const {
+			filteredBlocksList,
+			hoveredId,
+			isFetching,
+			searchCategory,
+			searchKeyword,
+		} = this.state;
+
+		const { categoriesList } = this.props;
+
+		return (
+			<div className="block-editor-blocks-list">
+				<div className="block-editor-reusable-blocks-inserter">
+					<Filter
+						categoriesList={ categoriesList || [] }
+						searchCategory={ searchCategory }
+						searchKeyword={ searchKeyword }
+						updateSearchCategory={ ( searchCategory ) => {
+							searchCategory = searchCategory ? parseInt( searchCategory, 10 ) : null;
+							this.setState( { searchCategory } );
+						} }
+						updateSearchKeyword={ searchKeyword => this.setState( { searchKeyword } ) }
+					/>
+					<List
+						filteredBlocksList={ filteredBlocksList }
+						isFetching={ isFetching }
+						onItemSelect={ this.replaceWithCoreBlock }
+						onHover={ ( hoveredId ) => this.setState( { hoveredId } ) }
+						searchKeywords={ this.normalizeSearchKeywords( searchKeyword ) }
+					/>
+					<div className="block-editor-reusable-blocks-inserter__preview">
+						{ hoveredId && (
+							<div className="block-editor-reusable-blocks-inserter__preview-content">
+								<BlockPreview
+									blocks={ createBlock( 'core/block', { ref: hoveredId } ) }
+									padding={ 10 }
+									viewportWidth={ 500 }
+								/>
+							</div>
+						) }
+					</div>
+				</div>
+			</div>
+		);
+	}
+}
+
+Edit.propTypes = {
+	postCategory: PropTypes.number,
+	categoriesList: PropTypes.array,
+};
+
+export default Edit;

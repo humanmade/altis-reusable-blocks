@@ -1,0 +1,30 @@
+{
+  "name": "enhanced-reusable-blocks",
+  "version": "1.0.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/humanmade/enhanced-reusable-blocks.git"
+  },
+  "author": "Human Made",
+  "bugs": {
+    "url": "https://github.com/humanmade/enhanced-reusable-blocks/issues"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --config=.config/webpack.config.dev.js",
+    "build": "webpack --config=.config/webpack.config.prod.js",
+    "phpcs": "vendor/bin/phpcs"
+  },
+  "homepage": "https://www.altis-dxp.com/",
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "prop-types": "^15.7.2"
+  },
+  "devDependencies": {
+    "@humanmade/webpack-helpers": "^0.5.2",
+    "node-sass": "^4.12.0",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1"
+  }
+}
