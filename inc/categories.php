@@ -13,5 +13,5 @@ function bootstrap() {
  * Add categories taxonomy to block post type.
  */
 function add_categories_taxonomy_to_blocks() {
-	register_taxonomy_for_object_type( 'category', 'wp_block' );
+	return register_taxonomy_for_object_type( 'category', 'wp_block' );
 }

@@ -28,15 +28,20 @@ class List extends Component {
 	}
 
 	/**
-	 * Get match results of the keyword within the block title and content.
+	 * Get match counts for the keyword within the block title and content.
+	 *
+	 * @param {String} keyword - Search keyword.
+	 * @param {Object} block - Block data object.
+	 *
+	 * @return {Array} Title match count, Content match count.
 	 */
-	getMatches = ( keyword, block ) => {
+	getMatchCounts = ( keyword, block ) => {
 		const regex = new RegExp( keyword, 'ig' );
 
 		const titleMatches = block.title.match( regex ) || [];
 		const contentMatches = block.content.match( regex ) || [];
 
-		return [ titleMatches, contentMatches ];
+		return [ titleMatches.length, contentMatches.length ];
 	};
 
 	/**
@@ -48,46 +53,56 @@ class List extends Component {
 	sortBlocks = () => {
 		const {
 			filteredBlocksList,
+			searchID,
 			searchKeywords,
 		} = this.props;
 
-		if ( ! searchKeywords ) {
-			return;
-		}
+		if ( searchKeywords && ! searchID ) {
+			filteredBlocksList.sort( ( blockX, blockY ) => {
+				let blockXCount = 0;
+				let blockYCount = 0;
 
-		filteredBlocksList.sort( ( blockX, blockY ) => {
+				/**
+				 * If keywords length is greater than 2, test for exact matches for the entire
+				 * search term within the title and content and weigh those more heavily.
+				 */
+				if ( searchKeywords.length > 2 ) {
+					const [ titleXMatches, contentXMatches ] = this.getMatchCounts( searchKeywords.join( ' ' ), blockX );
+					const [ titleYMatches, contentYMatches ] = this.getMatchCounts( searchKeywords.join( ' ' ), blockY );
 
-			let blockXCount = 0;
-			let blockYCount = 0;
+					const titleXScore = titleXMatches * TITLE_EXACT_MATCH_WEIGHT;
+					const contentXScore = contentXMatches * CONTENT_EXACT_MATCH_WEIGHT;
 
-			/**
-			 * If keywords length is greater than 2, test for exact matches for the entire
-			 * search term within the title and content and weigh those more heavily.
-			 */
-			if ( searchKeywords.length > 2 ) {
-				const [ titleXMatches, contentXMatches ] = this.getMatches( searchKeywords.join(' '), blockX );
-				const [ titleYMatches, contentYMatches ] = this.getMatches( searchKeywords.join(' '), blockY );
+					const titleYScore = titleYMatches * TITLE_EXACT_MATCH_WEIGHT;
+					const contentYScore = contentYMatches * CONTENT_EXACT_MATCH_WEIGHT;
 
-				blockXCount += titleXMatches.length * TITLE_EXACT_MATCH_WEIGHT + contentXMatches.length * CONTENT_EXACT_MATCH_WEIGHT;
-				blockYCount += titleYMatches.length * TITLE_EXACT_MATCH_WEIGHT + contentYMatches.length * CONTENT_EXACT_MATCH_WEIGHT;
-			}
+					blockXCount += titleXScore + contentXScore;
+					blockYCount += titleYScore + contentYScore;
+				}
 
-			// Loop through each string in searchKeywords, test for matches, and weigh those normally.
-			searchKeywords.forEach( keyword => {
-				const [ titleXMatches, contentXMatches ] = this.getMatches( keyword, blockX );
-				const [ titleYMatches, contentYMatches ] = this.getMatches( keyword, blockY );
+				// Loop through each string in searchKeywords, test for matches, and weigh those normally.
+				searchKeywords.forEach( ( keyword ) => {
+					const [ titleXMatches, contentXMatches ] = this.getMatchCounts( keyword, blockX );
+					const [ titleYMatches, contentYMatches ] = this.getMatchCounts( keyword, blockY );
 
-				blockXCount += titleXMatches.length * TITLE_WEIGHT + contentXMatches.length * CONTENT_WEIGHT;
-				blockYCount += titleYMatches.length * TITLE_WEIGHT + contentYMatches.length * CONTENT_WEIGHT;
+					const titleXScore = titleXMatches * TITLE_WEIGHT;
+					const contentXScore = contentXMatches * CONTENT_WEIGHT;
+
+					const titleYScore = titleYMatches * TITLE_WEIGHT;
+					const contentYScore = contentYMatches * CONTENT_WEIGHT;
+
+					blockXCount += titleXScore + contentXScore;
+					blockYCount += titleYScore + contentYScore;
+				} );
+
+				// Same weight, so sort by ID.
+				if ( blockXCount === blockYCount ) {
+					return blockX.id > blockY.id ? -1 : 1;
+				}
+
+				return blockXCount > blockYCount ? -1 : 1;
 			} );
-
-			// Same weight, so sort by ID.
-			if ( blockXCount === blockYCount ) {
-				return blockX.id > blockY.id ? -1 : 1;
-			}
-
-			return blockXCount > blockYCount ? -1 : 1;
-		} );
+		}
 
 		this.setState( { sortedBlocks: filteredBlocksList } );
 	};
@@ -106,24 +121,22 @@ class List extends Component {
 		return (
 			<div className="block-editor-reusable-blocks-inserter__list">
 				{
-					( ! sortedBlocks.length && isFetching) || isFetching ?
-					(
-						<Placeholder><Spinner /></Placeholder>
-					) :
-					(
-						<ul role="list" className="block-editor-block-types-list reusable-block-types-list">
-							{
-								sortedBlocks.map(block => (
-									<ListItem
-										key={ block.id }
-										onClick={ () => onItemSelect( block.id ) }
-										onHover={ onHover }
-										{ ...block }
-									/>
-								) )
-							}
-						</ul>
-					)
+					( ! sortedBlocks.length && isFetching ) || isFetching
+						? ( <Placeholder><Spinner /></Placeholder> )
+						: (
+							<ul className="block-editor-block-types-list reusable-block-types-list">
+								{
+									sortedBlocks.map( block => (
+										<ListItem
+											key={ block.id }
+											onClick={ () => onItemSelect( block.id ) }
+											onHover={ onHover }
+											{ ...block }
+										/>
+									) )
+								}
+							</ul>
+						)
 				}
 			</div>
 		);
@@ -135,6 +148,7 @@ List.propTypes = {
 	isFetching: PropTypes.bool.isRequired,
 	onItemSelect: PropTypes.func.isRequired,
 	onHover: PropTypes.func.isRequired,
+	searchID: PropTypes.number,
 	searchKeywords: PropTypes.array.isRequired,
 };
 

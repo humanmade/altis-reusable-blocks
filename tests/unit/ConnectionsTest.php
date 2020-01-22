@@ -4,6 +4,7 @@ namespace EnhancedReusableBlocks\Tests\Unit;
 
 use EnhancedReusableBlocks\Tests\Unit\TestCase;
 use EnhancedReusableBlocks\Connections as Testee;
+use const EnhancedReusableBlocks\BLOCK_POST_TYPE;
 
 use Brain\Monkey\Actions;
 use Brain\Monkey\Filters;
@@ -28,10 +29,6 @@ class ConnectionsTest extends TestCase {
 
 		Actions\expectAdded( 'post_updated' )
 			->with( 'EnhancedReusableBlocks\Connections\synchronize_associated_terms', 10, 3 );
-
-		Filters\expectAdded( 'wp_insert_post_data' )
-		 	->with( 'EnhancedReusableBlocks\Connections\insert_reusable_block_post_data' );
-
 
 		Testee\bootstrap();
 	}
@@ -61,44 +58,6 @@ class ConnectionsTest extends TestCase {
 	}
 
 	/**
-	 * Tests `insert_reusable_block_post_data` with the invalid post type.
-	 *
-	 * @return void
-	 */
-	public function test_insert_reusable_block_post_data_invalid_post_type() {
-		$data = [
-			'post_type'  => Testee\POST_POST_TYPE,
-			'post_title' => 'Test Block Title'
-		];
-
-		$new_data = Testee\insert_reusable_block_post_data( $data );
-
-		$this->assertSame( $data, $new_data );
-	}
-
-	/**
-	 * Tests `insert_reusable_block_post_data` with the valid post type.
-	 *
-	 * @return void
-	 */
-	public function test_insert_reusable_block_post_data_valid_data() {
-		$data = [
-			'post_type'  => Testee\BLOCK_POST_TYPE,
-			'post_title' => 'Test Block Title'
-		];
-
-		$post_name = 'test-block-title';
-
-		Functions\expect( 'sanitize_title_with_dashes' )
-			->with( $data['post_title'] )
-			->andReturn( $post_name );
-
-		$new_data = Testee\insert_reusable_block_post_data( $data );
-
-		$this->assertSame( $post_name, $new_data['post_name'] );
-	}
-
-	/**
 	 * Tests `maybe_create_shadow_term` and the scenario where the
 	 * post is the invalid post type and returns false.
 	 *
@@ -120,7 +79,7 @@ class ConnectionsTest extends TestCase {
 	 */
 	public function test_maybe_create_shadow_term_auto_draft_post_status() {
 		$post = \Mockery::mock( \WP_Post::class );
-		$post->post_type = Testee\BLOCK_POST_TYPE;
+		$post->post_type = BLOCK_POST_TYPE;
 		$post->post_status = 'auto-draft';
 
 		$this->assertFalse( Testee\maybe_create_shadow_term( 1, $post ) );
@@ -136,7 +95,7 @@ class ConnectionsTest extends TestCase {
 		$post_id = 1;
 
 		$post = \Mockery::mock( \WP_Post::class );
-		$post->post_type = Testee\BLOCK_POST_TYPE;
+		$post->post_type = BLOCK_POST_TYPE;
 		$post->post_title = 'Test Title';
 		$post->post_name = 'test-title';
 		$post->post_status = 'publish';
@@ -188,7 +147,7 @@ class ConnectionsTest extends TestCase {
 	 */
 	public function test_maybe_create_shadow_term_already_in_sync() {
 		$post = \Mockery::mock( \WP_Post::class );
-		$post->post_type = Testee\BLOCK_POST_TYPE;
+		$post->post_type = BLOCK_POST_TYPE;
 		$post->post_title = 'Test Title';
 		$post->post_name = 'test-title';
 		$post->post_status = 'publish';
@@ -219,7 +178,7 @@ class ConnectionsTest extends TestCase {
 		$post_id = 1;
 
 		$post = \Mockery::mock( \WP_Post::class );
-		$post->post_type = Testee\BLOCK_POST_TYPE;
+		$post->post_type = BLOCK_POST_TYPE;
 		$post->post_title = 'Test Title';
 		$post->post_name = 'test-title';
 		$post->post_status = 'publish';
@@ -267,7 +226,7 @@ class ConnectionsTest extends TestCase {
 		$post_id = 1;
 
 		$post = \Mockery::mock( \WP_Post::class );
-		$post->post_type = Testee\BLOCK_POST_TYPE;
+		$post->post_type = BLOCK_POST_TYPE;
 		$post->post_title = 'Test Title';
 		$post->post_name = 'test-title';
 		$post->post_status = 'publish';
@@ -302,7 +261,7 @@ class ConnectionsTest extends TestCase {
 		$post_id = 1;
 
 		$post = \Mockery::mock( \WP_Post::class );
-		$post->post_type = Testee\BLOCK_POST_TYPE;
+		$post->post_type = BLOCK_POST_TYPE;
 		$post->post_title = 'Test Title';
 		$post->post_name = 'test-title';
 		$post->post_status = 'publish';
@@ -368,7 +327,7 @@ class ConnectionsTest extends TestCase {
 
 		Functions\expect( 'get_post_type' )
 			->with( 1 )
-			->andReturn( Testee\BLOCK_POST_TYPE );
+			->andReturn( BLOCK_POST_TYPE );
 
 		Functions\expect( 'get_post_meta' )
 			->with( $post_id, 'shadow_term_id', true )
@@ -396,7 +355,7 @@ class ConnectionsTest extends TestCase {
 
 		Functions\expect( 'get_post_type' )
 			->with( 1 )
-			->andReturn( Testee\BLOCK_POST_TYPE );
+			->andReturn( BLOCK_POST_TYPE );
 
 		Functions\expect( 'get_post_meta' )
 			->with( $post_id, 'shadow_term_id', true )
@@ -411,6 +370,28 @@ class ConnectionsTest extends TestCase {
 			->andReturn( true );
 
 		$this->assertTrue( Testee\delete_shadow_term( $post_id ) );
+	}
+
+	/**
+	 * Test `get_associated_post` and the scenario where the post requested is valid.
+	 *
+	 * @return void
+	 */
+	public function test_get_associated_post_valid_post() {
+		$term_id = 1;
+
+		$post = \Mockery::mock( \WP_Post::class );
+		$post->ID = 1;
+
+		Functions\expect( 'get_term_meta' )
+			->with( $term_id, 'shadow_post_id', true )
+			->andReturn( $post->ID );
+
+		Functions\expect( 'get_post' )
+			->with( $post->ID )
+			->andReturn( $post );
+
+		$this->assertSame( Testee\get_associated_post( $term_id ), $post );
 	}
 
 	/**
@@ -460,10 +441,10 @@ class ConnectionsTest extends TestCase {
 		$post_id = 1;
 
 		$post_before = \Mockery::mock( \WP_Post::class );
-		$post_before->post_type = Testee\BLOCK_POST_TYPE;
+		$post_before->post_type = 'invalid';
 
 		$post_after = \Mockery::mock( \WP_Post::class );
-		$post_after->post_type = Testee\BLOCK_POST_TYPE;
+		$post_after->post_type = 'invalid';
 
 		$this->assertFalse( Testee\synchronize_associated_terms( $post_id, $post_before, $post_after ) );
 	}
@@ -480,13 +461,13 @@ class ConnectionsTest extends TestCase {
 		$post_before->post_title = 'Test Title';
 		$post_before->post_name = 'test-title';
 		$post_before->post_content = 'Same content';
-		$post_before->post_type = Testee\BLOCK_POST_TYPE;
+		$post_before->post_type = BLOCK_POST_TYPE;
 
 		$post_after = \Mockery::mock( \WP_Post::class );
 		$post_after->post_title = 'Test Title';
 		$post_after->post_name = 'test-title';
 		$post_after->post_content = 'Same content';
-		$post_after->post_type = Testee\BLOCK_POST_TYPE;
+		$post_after->post_type = BLOCK_POST_TYPE;
 
 		$this->assertFalse( Testee\synchronize_associated_terms( $post_id, $post_before, $post_after ) );
 	}
@@ -515,7 +496,11 @@ class ConnectionsTest extends TestCase {
 			->with( $post_after->post_content )
 			->andReturn( [] );
 
-		$this->assertFalse( Testee\synchronize_associated_terms( $post_id, $post_before, $post_after ) );
+		Functions\expect( 'wp_set_object_terms' )
+			->with( $post_id, null, Testee\RELATIONSHIP_TAXONOMY )
+			->andReturn( [ 1, 1] );
+
+		$this->assertTrue( Testee\synchronize_associated_terms( $post_id, $post_before, $post_after ) );
 	}
 
 	/**
@@ -539,6 +524,15 @@ class ConnectionsTest extends TestCase {
 		$post_after->post_type = Testee\POST_POST_TYPE;
 
 		$parsed_blocks = [
+			[
+				'blockName' => 'core/paragraph',
+				'attrs' => [],
+				'innerBlocks' => [],
+				'innerHTML' => 'This is a paragraph block!',
+				'innerContent' => [
+					'This is a paragraph block!',
+				],
+			],
 			[
 				'blockName' => 'core/block',
 				'attrs' => [

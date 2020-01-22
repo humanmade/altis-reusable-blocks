@@ -1,5 +1,5 @@
 // Relationships list styles
-.np-erb-relationships__relationships_list.components-panel__body {
+.erb-relationships__relationships_list.components-panel__body {
 	&.is-opened {
 		padding: 0;
 	}
@@ -22,7 +22,19 @@
 				float: none;
 				margin: 0;
 			}
+
+			.tablenav-paging-text {
+				margin: 0 10px;
+			}
 		}
+	}
+
+	.components-placeholder {
+		background: transparent;
+	}
+
+	.components-spinner {
+		margin: 0 auto;
 	}
 }
 
@@ -56,6 +68,11 @@
 				max-width: 25rem;
 			}
 		}
+	}
+
+	.block-editor-block-types-list {
+		margin-left: 0;
+		padding-left: 0;
 	}
 
 	@media ( max-width: 1280px ) {

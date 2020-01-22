@@ -1,0 +1,109 @@
+name: CI Build
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    strategy:
+      matrix:
+        php: [7.3]
+        node: [12.9.1]
+        phpunit: [7.5.15]
+        wpcs: [2.1.1]
+        vipcs: [2.0.0]
+    runs-on: ubuntu-latest
+    # each step has a 10 minute budget
+    timeout-minutes: 10
+    container:
+      image: php:${{ matrix.php }}-apache
+      env:
+        NODE_ENV: development
+      ports:
+      - 80
+      volumes:
+      - $GITHUB_WORKSPACE:/var/www/html
+    steps:
+    - name: Set up container
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        echo "Update package lists."
+        apt-get -y update
+        echo "Install base packages."
+        apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken build-essential libssl-dev gnupg libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libicu-dev libxml2-dev vim wget unzip git subversion
+        echo "Add yarn package repository."
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+        echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+        echo "Update package lists."
+        apt-get -y update
+        echo "Install NVM."
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+        . ~/.nvm/nvm.sh
+        echo "Install node."
+        nvm install ${{ matrix.node }}
+        nvm use ${{ matrix.node }}
+        echo "Install yarn."
+        apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken yarn
+        echo "Install composer."
+        curl -sS https://getcomposer.org/installer | php
+        mv composer.phar /usr/local/bin/composer
+        echo "Install PHP extensions."
+        docker-php-ext-install -j$(nproc) iconv intl xml soap opcache pdo mbstring
+        docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+        docker-php-ext-install -j$(nproc) gd
+        pecl install mcrypt-1.0.2
+        docker-php-ext-enable mcrypt
+
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    - name: Setup composer vendor folder cache
+      uses: actions/cache@v1
+      with:
+        path: vendor
+        key: composer-${{ hashFiles('composer.lock') }}
+
+    - name: Setup yarn node_modules folder cache
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: node_modules-${{ hashFiles('yarn.lock') }}
+
+    # Syntax check the PHP using 8 parallel threads
+    - name: PHP Syntax Linting
+      run: find . -path ./vendor -prune -o -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
+
+    - name: Run yarn install
+      run: |
+        yarn install
+
+    - name: Run yarn build
+      run: |
+        yarn run build --if-present
+
+    - name: Run composer validate
+      run: |
+        composer validate
+
+    - name: Run composer install
+      run: |
+        composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Install PHPUnit
+      run: |
+        composer global require "phpunit/phpunit=${{ matrix.phpunit }}"
+
+    - name: Run PHPUnit
+      run: |
+        ~/.composer/vendor/bin/phpunit --configuration "${GITHUB_WORKSPACE}/phpunit.xml.dist" --testsuite unit
+
+    - name: Install PHPCS with WordPress Coding Standards
+      run: |
+        composer global require dealerdirect/phpcodesniffer-composer-installer:0.5.0 phpcompatibility/phpcompatibility-wp:^2.1 wp-coding-standards/wpcs:${{ matrix.wpcs }} automattic/vipwpcs:${{ matrix.vipcs }}
+
+    - name: Run PHPCS Coding Standards
+      run: |
+        ~/.composer/vendor/bin/phpcs --standard="${GITHUB_WORKSPACE}/phpcs.xml.dist" --runtime-set ignore_warnings_on_exit 1 "${GITHUB_WORKSPACE}"
+
+    - name: Run ESLint
+      run: |
+        ./node_modules/.bin/eslint ./src

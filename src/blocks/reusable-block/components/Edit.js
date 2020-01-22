@@ -1,7 +1,7 @@
 import _debounce from 'lodash/debounce';
 import _deburr from 'lodash/deburr';
-import _isEqual from 'lodash/isequal';
-import _uniqBy from 'lodash/uniqby';
+import _isEqual from 'lodash/isEqual';
+import _uniqBy from 'lodash/uniqBy';
 import PropTypes from 'prop-types';
 
 import { BlockPreview } from '@wordpress/block-editor';
@@ -24,6 +24,7 @@ class Edit extends Component {
 		inputText: '',
 		isFetching: false,
 		searchCategory: this.props.postCategory,
+		searchID: 0,
 		searchKeyword: '',
 	};
 
@@ -48,15 +49,15 @@ class Edit extends Component {
 
 	componentDidUpdate( prevProps, prevState ) {
 		if (
-			this.props.postCategory !== prevProps.postCategory &&
-			this.state.searchCategory !== this.props.postCategory ) {
+			this.props.postCategory !== prevProps.postCategory
+			&& this.state.searchCategory !== this.props.postCategory
+		) {
 			this.setState( { searchCategory: this.props.postCategory } );
 		}
 
 		if (
-			this.state.searchCategory !== prevState.searchCategory ||
-			this.state.searchKeyword !== prevState.searchKeyword &&
-			! this.state.isFetching
+			this.state.searchCategory !== prevState.searchCategory
+			|| this.state.searchKeyword !== prevState.searchKeyword
 		) {
 			this.fetchBlocks();
 		}
@@ -66,18 +67,66 @@ class Edit extends Component {
 		this.abortController.abort();
 	}
 
+	fetchBlocks = () => {
+		const {
+			blocksList,
+			searchID,
+		} = this.state;
+
+		if ( ! searchID ) {
+			return this.fetchQueriedBlocks();
+		}
+
+		const filteredBlock = blocksList.find( block => block.id === searchID );
+
+		// If block already exists in blocksList, just filter the list.
+		if ( filteredBlock ) {
+			this.setState( { filteredBlocksList: [ filteredBlock ] } );
+		} else {
+			this.fetchQueriedBlocksByID();
+		}
+	}
+
+	/**
+	 * Fetches either the reusable blocks within a Post by post ID or fetch a single block by block ID.
+	 */
+	fetchQueriedBlocksByID = async () => {
+		const { searchID } = this.state;
+
+		this.setState( { isFetching: true } );
+
+		try {
+			const [ data ] = await fetchJson(
+				{
+					path: addQueryArgs( '/altis-erb/v1/search', { searchID } ),
+					signal: this.abortController.signal,
+				}
+			);
+
+			this.updateBlocksList( data );
+		} catch ( e ) {
+			/* eslint-disable no-console */
+			console.error( __( 'Error retrieving blocks by post or block ID.', 'enhanced-reusable-blocks' ) );
+			console.error( e );
+			/* eslint-enable no-console */
+
+			// Filter the block list with no blocks to match query.
+			this.setState( { filteredBlocksList: [] } );
+		}
+
+		this.setState( { isFetching: false } );
+	}
+
 	/**
 	 * Fetch the most recently created blocks within the currently selected category for the post that is being edited.
 	 */
-	fetchBlocks = async () => {
+	fetchQueriedBlocks = async () => {
 		const {
 			searchCategory,
 			searchKeyword,
 		} = this.state;
 
-		this.setState( {
-			isFetching: true,
-		} );
+		this.setState( { isFetching: true } );
 
 		try {
 			const queryArgs = { per_page: 100 };
@@ -94,19 +143,21 @@ class Edit extends Component {
 				{
 					path: addQueryArgs( '/wp/v2/blocks', queryArgs ),
 					signal: this.abortController.signal,
-				},
-				[ 'x-wp-totalpages', 'x-wp-total' ]
+				}
 			);
 
 			this.updateBlocksList( data );
 		} catch ( e ) {
+			/* eslint-disable no-console */
 			console.error( __( 'Error retrieving blocks.', 'enhanced-reusable-blocks' ) );
 			console.error( e );
+			/* eslint-enable no-console */
+
+			// Filter the block list with no blocks to match query.
+			this.setState( { filteredBlocksList: [] } );
 		}
 
-		this.setState( {
-			isFetching: false,
-		} );
+		this.setState( { isFetching: false } );
 	};
 
 	/**
@@ -114,7 +165,7 @@ class Edit extends Component {
 	 *
 	 * @param {Object[]} blocks - Array of blocks.
 	 *
-	 * @returns {Object[]} Normalized blocks.
+	 * @return {Object[]} Normalized blocks.
 	 */
 	normalizeBlocks = ( blocks ) => {
 		return blocks.map( block => ( {
@@ -131,14 +182,18 @@ class Edit extends Component {
 	 * @param {Object[]} newBlocks - Array of new blocks fetched.
 	 */
 	updateBlocksList = ( newBlocks ) => {
-		const { blocksList } = this.state;
+		const { blocksList, searchID } = this.state;
 
-		const newBlocksList = _uniqBy( [ ...blocksList, ...this.normalizeBlocks( newBlocks ) ], 'id' );
+		const normalizedNewBlocks = this.normalizeBlocks( newBlocks );
+
+		const newBlocksList = _uniqBy( [ ...blocksList, ...normalizedNewBlocks ], 'id' );
 
 		if ( ! _isEqual( newBlocksList, blocksList ) ) {
-			this.setState( {
-				blocksList: newBlocksList,
-			} );
+			this.setState( { blocksList: newBlocksList } );
+		}
+
+		if ( searchID ) {
+			return this.setState( { filteredBlocksList: normalizedNewBlocks } );
 		}
 
 		this.filterBlocksList();
@@ -147,7 +202,7 @@ class Edit extends Component {
 	/**
 	 * Replace the current block with the `core/block` once we get the ID of that block.
 	 *
-	 * @param {Number} ref Reference ID for the reusable block.
+	 * @param {Number} ref - Reference ID for the reusable block.
 	 */
 	replaceWithCoreBlock = ( ref ) => {
 		const { clientId } = this.props;
@@ -159,7 +214,7 @@ class Edit extends Component {
 	/**
 	 * Converts the search keyword into a normalized keyword.
 	 *
-	 * @param {string} keyword The search keyword to normalize.
+	 * @param {string} keyword - The search keyword to normalize.
 	 *
 	 * @return {Array} The normalized search keywords with each keyword as an item in the array.
 	 */
@@ -170,13 +225,13 @@ class Edit extends Component {
 
 		// Accommodate leading slash, matching autocomplete expectations.
 		//  Input: "/media"
-		keyword = keyword.replace(/^\//, '');
+		keyword = keyword.replace( /^\//, '' );
 
 		// Strip leading and trailing whitespace.
 		//  Input: " media "
 		keyword = keyword.trim();
 
-		return keyword.split(' ');
+		return keyword.split( ' ' );
 	};
 
 	/**
@@ -193,7 +248,7 @@ class Edit extends Component {
 			return this.setState( { filteredBlocksList: blocksList } );
 		}
 
-		const filteredBlocksList = blocksList.filter( block => {
+		const filteredBlocksList = blocksList.filter( ( block ) => {
 			if ( searchCategory && ! block.categories.includes( searchCategory ) ) {
 				return false;
 			}
@@ -202,7 +257,7 @@ class Edit extends Component {
 				// Split the keywords by spaces and then check each word.
 				const searchKeywords = this.normalizeSearchKeywords( searchKeyword );
 
-				return searchKeywords.every( keyword => {
+				return searchKeywords.every( ( keyword ) => {
 					// Check if keyword is excluded.
 					const isExcludedKeyword = keyword.charAt( 0 ) === '-';
 
@@ -231,6 +286,7 @@ class Edit extends Component {
 			isFetching,
 			searchCategory,
 			searchKeyword,
+			searchID,
 		} = this.state;
 
 		const { categoriesList } = this.props;
@@ -241,18 +297,27 @@ class Edit extends Component {
 					<Filter
 						categoriesList={ categoriesList || [] }
 						searchCategory={ searchCategory }
+						searchID={ searchID }
 						searchKeyword={ searchKeyword }
 						updateSearchCategory={ ( searchCategory ) => {
 							searchCategory = searchCategory ? parseInt( searchCategory, 10 ) : null;
 							this.setState( { searchCategory } );
 						} }
-						updateSearchKeyword={ searchKeyword => this.setState( { searchKeyword } ) }
+						updateSearchKeyword={ ( searchKeyword ) => {
+							const searchID = /^[0-9]+$/.test( searchKeyword ) ? parseInt( searchKeyword, 10 ) : 0;
+
+							this.setState( {
+								searchKeyword,
+								searchID,
+							} );
+						} }
 					/>
 					<List
 						filteredBlocksList={ filteredBlocksList }
 						isFetching={ isFetching }
 						onItemSelect={ this.replaceWithCoreBlock }
-						onHover={ ( hoveredId ) => this.setState( { hoveredId } ) }
+						onHover={ hoveredId => this.setState( { hoveredId } ) }
+						searchID={ searchID }
 						searchKeywords={ this.normalizeSearchKeywords( searchKeyword ) }
 					/>
 					<div className="block-editor-reusable-blocks-inserter__preview">
@@ -273,6 +338,7 @@ class Edit extends Component {
 }
 
 Edit.propTypes = {
+	clientId: PropTypes.string,
 	postCategory: PropTypes.number,
 	categoriesList: PropTypes.array,
 };

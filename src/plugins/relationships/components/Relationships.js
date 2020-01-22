@@ -1,7 +1,12 @@
-import _uniqBy from 'lodash/uniqby';
+import _uniqBy from 'lodash/uniqBy';
 import PropTypes from 'prop-types';
 
-import { PanelBody, PanelRow } from '@wordpress/components';
+import {
+	PanelBody,
+	PanelRow,
+	Placeholder,
+	Spinner,
+} from '@wordpress/components';
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { Component, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -22,6 +27,7 @@ class Relationships extends Component {
 	state = {
 		relationshipsList: [],
 		currentPage: 1,
+		isFetching: false,
 		totalPages: 0,
 		totalItems: 0,
 	};
@@ -35,16 +41,21 @@ class Relationships extends Component {
 
 	/**
 	 * Fetch all the posts that use the current block.
+	 *
+	 * @param {Number} page - Page number for the request.
 	 */
 	fetchRelationships = async ( page = 1 ) => {
 		const { currentPostId } = this.props;
 
+		this.setState( { isFetching: true } );
+
 		try {
-			const data = await fetchJson( {
+			const data = await fetchJson(
+				{
 					path: addQueryArgs(
-						`/erb/v1/relationships`, {
+						`/altis-erb/v1/relationships`, {
 							block_id: currentPostId,
-							page
+							page,
 						}
 					),
 				},
@@ -53,24 +64,28 @@ class Relationships extends Component {
 
 			this.updateRelationshipsList( data );
 		} catch ( e ) {
+			/* eslint-disable no-console */
 			console.error( 'Error retrieving relationships for block.' );
 			console.error( e );
+			/* eslint-enable no-console */
 		}
+
+		this.setState( { isFetching: false } );
 	};
 
 	/**
 	 * Update the Relationships List state object with a new list and normalize them.
 	 *
 	 * @param {Object[]} data - Array of new relationships fetched and response headers.
-	 * @param {Array} newRelationshipsList - Array of new relationships fetched.
-	 * @param {Array} headers - Array of response headers.
+	 * @param {Object[]} data.newRelationshipsList - Array of new relationships fetched.
+	 * @param {Object[]} data.headers - Array of response headers.
 	 */
 	updateRelationshipsList = ( [ newRelationshipsList, headers ] ) => {
 		const { relationshipsList } = this.state;
 
 		if ( ! newRelationshipsList.every( item => relationshipsList.includes( item ) ) ) {
-			const totalPages = parseInt( headers['x-wp-totalpages'], 10 );
-			const totalItems = parseInt( headers['x-wp-total'], 10 );
+			const totalPages = parseInt( headers[ 'x-wp-totalpages' ], 10 );
+			const totalItems = parseInt( headers[ 'x-wp-total' ], 10 );
 
 			this.setState( {
 				relationshipsList: _uniqBy( [ ...relationshipsList, ...newRelationshipsList ], 'id' ),
@@ -88,7 +103,7 @@ class Relationships extends Component {
 
 		if ( currentPage > 1 ) {
 			this.setState( {
-				currentPage: currentPage - 1
+				currentPage: currentPage - 1,
 			} );
 		}
 	};
@@ -105,7 +120,7 @@ class Relationships extends Component {
 
 		if ( currentPage < totalPages ) {
 			this.setState( {
-				currentPage: currentPage + 1
+				currentPage: currentPage + 1,
 			} );
 
 			if ( relationshipsList.length <= currentPage * relationshipsPerPage ) {
@@ -117,6 +132,7 @@ class Relationships extends Component {
 	render() {
 		const {
 			currentPage,
+			isFetching,
 			relationshipsList,
 			totalPages,
 			totalItems,
@@ -143,7 +159,11 @@ class Relationships extends Component {
 					title={ title }
 				>
 					<PanelBody className={ `${ baseClassName }__relationships_list` }>
-						{ relationshipItems }
+						{
+							isFetching
+								? <Placeholder><Spinner /></Placeholder>
+								: relationshipItems
+						}
 						<Pagination
 							currentPage={ currentPage }
 							goToPrevPage={ this.goToPrevPage }

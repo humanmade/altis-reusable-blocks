@@ -10,8 +10,8 @@ use EnhancedReusableBlocks;
 
 use WP_Error;
 use WP_Query;
-use WP_REST_Controller;
 use WP_REST_Posts_Controller;
+use WP_REST_Response;
 use WP_REST_Request;
 use WP_REST_Server;
 
@@ -20,10 +20,27 @@ use WP_REST_Server;
  *
  * Create REST API endpoints for returning block relationship data.
  */
-class REST_Endpoint extends WP_REST_Controller {
+class REST_Endpoint {
 
+	/**
+	 * Namespace for the endpoint.
+	 *
+	 * @var string
+	 */
+	protected $namespace;
+
+	/**
+	 * Base URL for endpoint.
+	 *
+	 * @var string
+	 */
+	protected $rest_base;
+
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
-		$this->namespace = 'erb/v1';
+		$this->namespace = 'altis-erb/v1';
 		$this->rest_base = 'relationships';
 	}
 
@@ -35,21 +52,30 @@ class REST_Endpoint extends WP_REST_Controller {
 			$this->namespace,
 			$this->rest_base,
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'callback' => [ $this, 'get_items' ],
-				'schema'   => $this->get_item_schema(),
-				'args'     => [
-					'context' => [
-						'default'  => 'view',
-					],
-					'block_id' => [
-						'required' => true,
+				[
+					'methods'  => WP_REST_Server::READABLE,
+					'callback' => [ $this, 'get_items' ],
+					'args'     => [
+						'context' => [
+							'default'  => 'view',
+						],
+						'block_id' => [
+							'description' => esc_html__( 'Block ID to get the relationship data for.', 'enhanced-reusable-blocks' ),
+							'required'    => true,
+							'type'        => 'integer',
+						],
 					],
 				],
+				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
 	}
 
+	/**
+	 * Gets the schema for a single relationship item.
+	 *
+	 * @return array $schema
+	 */
 	public function get_item_schema() {
 		$schema = [
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
@@ -84,13 +110,46 @@ class REST_Endpoint extends WP_REST_Controller {
 						'rendered' => [
 							'description' => __( 'HTML title for the object, transformed for display.' ),
 							'type'        => 'string',
-							'context'     => [ 'view', 'edit', 'embed' ],
+							'context'     => [ 'view' ],
 							'readonly'    => true,
 						],
 					],
 				],
 			],
 		];
+
+		/**
+		 * Filters the additional fields array which starts as an empty array.
+		 *
+		 * @param array $additional_fields Array of schema data for additional fields to include in the REST response.
+		 */
+		$additional_fields = apply_filters( 'rest_get_relationship_item_additional_fields_schema', [] );
+
+		$schema['properties'] = array_merge( $schema['properties'], $additional_fields );
+
+		return $schema;
+	}
+
+	/**
+	 * Prepares a response for insertion into a collection.
+	 *
+	 * @param WP_REST_Response $response Response object.
+	 * @return array|mixed Response data, ready for insertion into collection data.
+	 */
+	public function prepare_response_for_collection( $response ) {
+		if ( ! ( $response instanceof WP_REST_Response ) ) {
+			return $response;
+		}
+
+		$data   = (array) $response->get_data();
+		$server = rest_get_server();
+		$links  = $server::get_compact_response_links( $response );
+
+		if ( ! empty( $links ) ) {
+			$data['_links'] = $links;
+		}
+
+		return $data;
 	}
 
 	/**
@@ -137,6 +196,7 @@ class REST_Endpoint extends WP_REST_Controller {
 			return [];
 		}
 
+		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		$query_args = [
 			'posts_per_page' => EnhancedReusableBlocks\RELATIONSHIPS_PER_PAGE,
 			'paged'          => $page ?? 1,
@@ -150,6 +210,7 @@ class REST_Endpoint extends WP_REST_Controller {
 				]
 			]
 		];
+		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 
 		$posts_query  = new WP_Query();
 		$query_result = $posts_query->query( $query_args );
@@ -241,15 +302,12 @@ class REST_Endpoint extends WP_REST_Controller {
 		/**
 		 * Filters the post data for a response.
 		 *
-		 * The dynamic portion of the hook name, `$this->post_type`, refers to the post type slug.
-		 *
-		 * @since 4.7.0
 		 *
 		 * @param WP_REST_Response $response The response object.
 		 * @param WP_Post          $post     Post object.
 		 * @param WP_REST_Request  $request  Request object.
 		 */
-		return apply_filters( "rest_prepare_{$this->rest_base}", $response, $post, $request );
+		return apply_filters( 'rest_prepare_relationships_response', $response, $post, $request );
 	}
 
 }

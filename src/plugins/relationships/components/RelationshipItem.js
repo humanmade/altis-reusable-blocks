@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 import { PanelRow } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import settings from '../../../settings';
 

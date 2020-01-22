@@ -9,7 +9,8 @@ namespace EnhancedReusableBlocks\Connections;
 use WP_Post;
 use WP_Term;
 
-const BLOCK_POST_TYPE = 'wp_block';
+use const EnhancedReusableBlocks\BLOCK_POST_TYPE;
+
 const POST_POST_TYPE = 'post';
 const RELATIONSHIP_TAXONOMY = 'wp_block_to_post';
 
@@ -17,14 +18,10 @@ const RELATIONSHIP_TAXONOMY = 'wp_block_to_post';
  * EnhancedReusableBlocks\Connections Bootstrap.
  */
 function bootstrap() {
-	// Actions.
 	add_action( 'init',                __NAMESPACE__ . '\\register_relationship_taxonomy' );
 	add_action( 'wp_insert_post',      __NAMESPACE__ . '\\maybe_create_shadow_term', 10, 2 );
 	add_action( 'before_delete_post',  __NAMESPACE__ . '\\delete_shadow_term' );
 	add_action( 'post_updated',        __NAMESPACE__ . '\\synchronize_associated_terms', 10, 3 );
-
-	// Filters.
-	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\insert_reusable_block_post_data' );
 }
 
 /**
@@ -33,7 +30,7 @@ function bootstrap() {
  * @return array
  */
 function get_post_types_with_reusable_blocks() : array {
-	return apply_filters( 'post_types_with_reusable_blocks', [ BLOCK_POST_TYPE, POST_POST_TYPE ] );
+	return apply_filters( 'altis_post_types_with_reusable_blocks', [ BLOCK_POST_TYPE, POST_POST_TYPE ] );
 }
 
 /**
@@ -50,25 +47,6 @@ function register_relationship_taxonomy() {
 			'public'        => false,
 		]
 	);
-}
-
-/**
- * Filter callback for `wp_insert_post_data`. Sets the post_name with the post_title for `wp_block` posts before inserting post data.
- *
- * @param array $data An array of slashed post data.
- *
- * @return array Filtered array of post data.
- */
-function insert_reusable_block_post_data( array $data ) : array {
-	if ( ! isset( $data['post_type'] ) || ! isset( $data['post_title'] ) ) {
-		return $data;
-	}
-
-	if ( $data['post_type'] === BLOCK_POST_TYPE ) {
-		$data['post_name'] = sanitize_title_with_dashes( $data['post_title'] ) . '-block';
-	}
-
-	return $data;
 }
 
 /**

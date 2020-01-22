@@ -7,7 +7,7 @@ export const mapSelectToProps = ( select ) => {
 	const {
 		getEntityRecords,
 		getTaxonomy,
-	} = select('core');
+	} = select( 'core' );
 	const { getEditedPostAttribute } = select( 'core/editor' );
 
 	const taxonomy = getTaxonomy( 'category' );

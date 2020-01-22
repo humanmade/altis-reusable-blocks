@@ -18,13 +18,23 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "EnhancedReusableBlocks\\Tests\\Unit\\": "tests/unit/"
+            "EnhancedReusableBlocks\\Tests\\Unit\\": "tests/unit/",
+            "EnhancedReusableBlocks\\REST_API\\": "rest-api/",
+            "EnhancedReusableBlocks\\REST_API\\Relationships\\": "rest-api/relationships/",
+            "EnhancedReusableBlocks\\REST_API\\Search\\": "rest-api/search/"
         },
         "files": [
             "inc/namespace.php",
             "inc/categories.php",
-            "inc/connections.php"
+            "inc/connections.php",
+            "inc/rest-api/namespace.php",
+            "inc/rest-api/relationships/class-rest-endpoint.php",
+            "inc/rest-api/search/class-rest-endpoint.php"
         ]
+    },
+    "scripts": {
+        "coverage": "phpunit --coverage-html coverage",
+        "test:unit": "phpunit --testsuite unit"
     },
     "extra": {
         "installer-paths": {
