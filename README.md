@@ -2,7 +2,7 @@
 
 > Adds functionality to reusable blocks to ease their usage in the Altis environment.
 
-![](https://github.com/kevinlangleyjr/enhanced-reusable-blocks/workflows/CI%20Build/badge.svg)
+![<img src="https://github.com/kevinlangleyjr/enhanced-reusable-blocks/workflows/CI%20Build/badge.svg" />](https://github.com/kevinlangleyjr/enhanced-reusable-blocks/actions?query=workflow%3A%22CI+Build%22)
 
 ----
 
