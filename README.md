@@ -147,6 +147,8 @@ add_filter( 'rest_prepare_relationships_response', function ( WP_REST_Response $
 }, 10, 2 );
 ```
 
+## Release Process
+
 ### Versioning
 
 This plugin follows [Semantic Versioning](https://semver.org/).
