@@ -78,6 +78,28 @@ composer test:unit -- --filter logging
 
 ### PHP Filters
 
+#### `altis_post_types_with_reusable_blocks`
+
+This filter allows the user to manipulate the post types that can use reusable blocks and should have the relationship for the shadow taxonomy.
+
+**Arguments:**
+
+* `$post_types` (`string[]`): List of post type slugs.
+
+**Usage Example:**
+
+```php
+// Add the "page" post type.
+add_filter( 'altis_post_types_with_reusable_blocks', function ( aray $post_types ): array {
+
+	$post_types[] = 'page';
+
+	return $post_types;
+} );
+```
+
+----
+
 #### `rest_get_relationship_item_additional_fields_schema`
 
 This filter allows the user to modify the schema for the relationship data before it is returned from the REST API.
@@ -100,28 +122,6 @@ add_filter( 'rest_get_relationship_item_additional_fields_schema', function ( ar
 	];
 
 	return $additional_fields;
-} );
-```
-
-----
-
-#### `altis_post_types_with_reusable_blocks`
-
-This filter allows the user to manipulate the post types that can use reusable blocks and should have the relationship for the shadow taxonomy.
-
-**Arguments:**
-
-* `$post_types` (`string[]`): List of post type slugs.
-
-**Usage Example:**
-
-```php
-// Add the "page" post type.
-add_filter( 'altis_post_types_with_reusable_blocks', function ( aray $post_types ): array {
-
-	$post_types[] = 'page';
-
-	return $post_types;
 } );
 ```
 
