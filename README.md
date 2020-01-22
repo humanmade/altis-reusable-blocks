@@ -23,8 +23,6 @@ Enhanced Reusable Blocks provides enterprise workflows and added functionality f
     * [`rest_get_relationship_item_additional_fields_schema`](#rest_get_relationship_item_additional_fields_schema)
     * [`rest_prepare_relationships_response`](#rest_prepare_relationships_response)
 * [Release Process](#release-process)
-  * [Using the `deploy` Script](#using-the-deploy-script)
-  * [The Build-for-Deploy Process in Detail](#the-build-for-deploy-process-in-detail)
   * [Versioning](#versioning)
   * [Publishing a Release](#publishing-a-release)
 
