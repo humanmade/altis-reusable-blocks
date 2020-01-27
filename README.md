@@ -1,17 +1,23 @@
 # Altis Enhanced Reusable Blocks
 
-> Adds functionality to reusable blocks to ease their usage in the Altis environment.
+Enhanced Reusable Blocks provides enterprise workflows and added functionality for reusable blocks.
+
+The main goals of Enhanced Reusable Blocks are to:
+
+* provide a much more seamless implementation of reusable blocks into enterprise-level setups and workflows.
+* provide an improved user interface that allows for better block discovery, including search and filtering.
 
 ![](https://github.com/kevinlangleyjr/enhanced-reusable-blocks/workflows/CI%20Build/badge.svg)
 
 ----
 
-## Introduction
-
-Enhanced Reusable Blocks provides enterprise workflows and added functionality for reusable blocks.
-
 ## Table of Contents
 
+* [Features](#features)
+  * [Admin Bar and Menu](#admin-bar-and-menu)
+  * [Categories](#categories)
+  * [Filtering](#filtering)
+  * [Search](#search)
 * [Installation](#installation)
   * [Build Process](#build-process)
   * [Requirements](#requirements)
@@ -25,6 +31,45 @@ Enhanced Reusable Blocks provides enterprise workflows and added functionality f
 * [Release Process](#release-process)
   * [Versioning](#versioning)
   * [Publishing a Release](#publishing-a-release)
+
+----
+
+## Features
+
+Enhanced Reusable Blocks includes new features and improvements both for the creation and the discovery/usage of reusable blocks.
+
+#### Admin Bar and Menu
+
+By default, reusable blocks are somewhat hidden and can only be accessed from a submenu item in the block editor.
+With Enhanced Reusable Blocks, however, reusable blocks are upgraded to first-party citizens in the admin area.
+
+Like for every other content type, the admin menu on the left now contains a dedicated submenu for reusable blocks, offering shortcuts to see all existing reusable blocks, to create a new reusable block, and to see and manage categories, as well as any other publicly available taxonomy registered for reusable blocks.
+Also, the admin bar at the top now contains a shortcut to create a new reusable block, just like it is possible to do for posts, media, pages or users.
+
+#### Categories
+
+Just like posts or pages, reusable blocks can have one or more categories assigned to them.
+This helps in discovering relevant blocks by making use of the dedicated Category filter included in the block picker.
+
+#### Filtering
+
+When looking for an existing reusable block to insert into a post, the new block picker allows to search/filter based on a category.
+
+By default, the Category filter is set to the (main) category of the current post.
+However, this can be changed, without affecting the post's categories.
+
+#### Search
+
+In addition to the Category filter, the block picker also provides a search field.
+The search query is used to find reusable blocks with either a matching title or content, or both.
+Search results are sorted based on a smart algorithm using different weights for title matches vs. content matches, and exact matches vs. partial matches.
+As a result, more relevant blocks are displayed first.
+
+The search input also supports numeric ID lookups.
+By entering a block ID, the result set will be just that one according block, ready to be inserted.
+If the provided ID is a post ID, the results will be all reusable blocks referenced by that post, if any.
+
+----
 
 ## Installation
 
@@ -71,6 +116,8 @@ Any arguments passed to the script will then be passed on to the `phpunit` cli, 
 ```sh
 composer test:unit -- --filter logging
 ```
+
+----
 
 ## Usage
 
@@ -146,6 +193,8 @@ add_filter( 'rest_prepare_relationships_response', function ( WP_REST_Response $
 	return $response;
 }, 10, 2 );
 ```
+
+----
 
 ## Release Process
 
