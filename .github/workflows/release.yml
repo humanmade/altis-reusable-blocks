@@ -13,7 +13,7 @@ jobs:
     # each step has a 10 minute budget
     timeout-minutes: 10
     container:
-      image: php:${{ matrix.php }}-apache
+      image: php:7.3-apache
       env:
         NODE_ENV: development
       ports:
@@ -23,6 +23,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
       - name: Set up container
         run: |
           export DEBIAN_FRONTEND=noninteractive
@@ -35,12 +39,6 @@ jobs:
           echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
           echo "Update package lists."
           apt-get -y update
-          echo "Install NVM."
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          . ~/.nvm/nvm.sh
-          echo "Install node."
-          nvm install ${{ matrix.node }}
-          nvm use ${{ matrix.node }}
           echo "Install yarn."
           apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken yarn
       - name: Run yarn build
