@@ -13,9 +13,10 @@ jobs:
       - name: Create Release
         uses: technote-space/release-github-actions@v2
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OUTPUT_BUILD_INFO_FILENAME: build.json
-          TEST_TAG_PREFIX: test/
-          ORIGINAL_TAG_PREFIX: original/
           CLEAN_TEST_TAG: true
           CLEAN_TARGETS: .[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml,node_modules,tests,*.xml.dist
+          COMMIT_MESSAGE: "Built release for ${{ github.ref }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORIGINAL_TAG_PREFIX: original/
+          OUTPUT_BUILD_INFO_FILENAME: build.json
+          TEST_TAG_PREFIX: test/
