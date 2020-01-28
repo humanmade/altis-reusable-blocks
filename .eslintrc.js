@@ -8,11 +8,11 @@ const isProduction = process.env.NODE_ENV === 'production';
 module.exports = {
 	"root": true,
 	"extends": [
-		"plugin:@wordpress/eslint-plugin/recommended"
+		"plugin:@wordpress/eslint-plugin/recommended",
+		"plugin:import/errors"
 	],
 	"env": {
-		"browser": true,
-		"jquery": true
+		"browser": true
 	},
 	"plugins": [
 		"jsdoc"
@@ -20,7 +20,15 @@ module.exports = {
 	"rules": {
 		"@wordpress/dependency-group": "off",
 		"@wordpress/react-no-unsafe-timeout": "error",
-		"arrow-parens": [ 2, "as-needed", { "requireForBlockBody": true } ],
+		"import/no-unresolved": [
+			"error",
+			{
+				"commonjs": true,
+				"ignore": [
+					"^@wordpress\/[^/]+"
+				]
+			}
+		],
 		"jsdoc/check-param-names": "warn",
 		"jsdoc/check-tag-names": "warn",
 		"jsdoc/check-types": [
@@ -41,11 +49,7 @@ module.exports = {
 		"jsdoc/valid-types": "warn",
 		"max-len": [
 			"warn",
-			120,
-			{
-				"ignoreTemplateLiterals": true,
-				"ignoreStrings": true
-			}
+			120
 		],
 		"no-console": isProduction ? "error" : "warn",
 		"no-debugger": isProduction ? "error" : "warn",
@@ -77,6 +81,6 @@ module.exports = {
 		],
 
 		// There is an issue with references not being detected when used as JSX component name (e.g., App in <App />).
-		"@wordpress/no-unused-vars-before-return": "off"
+		"@wordpress/no-unused-vars-before-return": "off",
 	}
 };
