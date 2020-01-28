@@ -1,62 +1,20 @@
 on:
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  create:
+  repository_dispatch:
+    types: [release]
 
 name: Create Release
 
 jobs:
-  build:
+  release:
     name: Create Release
     runs-on: ubuntu-latest
-    # each step has a 10 minute budget
-    timeout-minutes: 10
-    container:
-      image: php:7.3-apache
-      env:
-        NODE_ENV: development
-      ports:
-      - 80
-      volumes:
-      - $GITHUB_WORKSPACE:/var/www/html
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup NodeJS
-        uses: actions/setup-node@v1
-        with:
-          node-version: '10.x'
-      - name: Set up container
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          echo "Update package lists."
-          apt-get -y update
-          echo "Install base packages."
-          apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken build-essential libssl-dev gnupg libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libicu-dev libxml2-dev libonig-dev vim wget unzip git
-          echo "Add yarn package repository."
-          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-          echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-          echo "Update package lists."
-          apt-get -y update
-          echo "Install yarn."
-          apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken yarn
-      - name: Run yarn install
-        run: |
-          yarn install
-      - name: Run yarn build
-        run: |
-          yarn run build
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: technote-space/release-github-actions@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Version: ${{ github.ref }}
-            Check changlog for release details
-          draft: false
-          prerelease: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT_BUILD_INFO_FILENAME: build.json
+          TEST_TAG_PREFIX: test/
+          ORIGINAL_TAG_PREFIX: original/
+          CLEAN_TEST_TAG: true
