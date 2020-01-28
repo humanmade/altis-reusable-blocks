@@ -23,6 +23,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
       - name: Set up container
         run: |
           export DEBIAN_FRONTEND=noninteractive
@@ -43,6 +47,9 @@ jobs:
           nvm use ${{ matrix.node }}
           echo "Install yarn."
           apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken yarn
+      - name: Run yarn install
+        run: |
+          yarn install
       - name: Run yarn build
         run: |
           yarn run build
