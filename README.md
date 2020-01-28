@@ -7,7 +7,7 @@ The main goals of Enhanced Reusable Blocks are to:
 * provide a much more seamless implementation of reusable blocks into enterprise-level setups and workflows.
 * provide an improved user interface that allows for better block discovery, including search and filtering.
 
-![](https://github.com/kevinlangleyjr/enhanced-reusable-blocks/workflows/CI%20Build/badge.svg)
+![](https://github.com/humanmade/enhanced-reusable-blocks/workflows/CI%20Build/badge.svg)
 
 ----
 
