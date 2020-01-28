@@ -18,3 +18,4 @@ jobs:
           TEST_TAG_PREFIX: test/
           ORIGINAL_TAG_PREFIX: original/
           CLEAN_TEST_TAG: true
+          CLEAN_TARGETS: .[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml,node_modules,tests,*.xml.dist
