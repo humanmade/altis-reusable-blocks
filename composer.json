@@ -1,6 +1,7 @@
 {
     "name": "humanmade/enhanced-reusable-blocks",
     "description": "Adds functionality to reusable blocks to enhance their usage.",
+    "license": "GPL-2.0-or-later",
     "type": "wordpress-plugin",
     "require": {
         "php": ">=7.1",
