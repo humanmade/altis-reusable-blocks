@@ -12,9 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     # each step has a 10 minute budget
     timeout-minutes: 10
+    container:
+      image: php:${{ matrix.php }}-apache
+      env:
+        NODE_ENV: development
+      ports:
+      - 80
+      volumes:
+      - $GITHUB_WORKSPACE:/var/www/html
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - name: Set up container
         run: |
           export DEBIAN_FRONTEND=noninteractive
