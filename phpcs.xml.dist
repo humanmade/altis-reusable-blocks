@@ -16,6 +16,9 @@
 	<arg name="colors"/>
 	<arg name="extensions" value="php"/>
 
+	<!-- Prevent deprecation warnings in WPCS breaking checks. -->
+	<config name="ignore_warnings_on_exit" value="1"/>
+
 	<!-- Check for PHP cross-version compatibility. -->
 	<config name="testVersion" value="7.1-"/>
 	<rule ref="PHPCompatibility"/>
