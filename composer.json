@@ -36,10 +36,5 @@
         "coverage": "phpunit --coverage-html coverage",
         "lint:phpcs": "phpcs",
         "test:unit": "phpunit --testsuite unit"
-    },
-    "extra": {
-        "installer-paths": {
-            "vendor/{$name}/": ["humanmade/asset-loader"]
-        }
     }
 }

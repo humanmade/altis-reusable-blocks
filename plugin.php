@@ -16,10 +16,6 @@ defined( 'ABSPATH' ) || die;
 
 const PLUGIN_FILE = __FILE__;
 
-if ( is_readable( __DIR__ . '/vendor/asset-loader/asset-loader.php' ) ) {
-	include_once __DIR__ . '/vendor/asset-loader/asset-loader.php';
-}
-
 require_once __DIR__ . '/inc/namespace.php';
 require_once __DIR__ . '/inc/categories.php';
 require_once __DIR__ . '/inc/connections.php';
