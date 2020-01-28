@@ -77,7 +77,7 @@ class Edit extends Component {
 			return this.fetchQueriedBlocks();
 		}
 
-		const filteredBlock = blocksList.find( block => block.id === searchID );
+		const filteredBlock = blocksList.find( ( block ) => block.id === searchID );
 
 		// If block already exists in blocksList, just filter the list.
 		if ( filteredBlock ) {
@@ -168,7 +168,7 @@ class Edit extends Component {
 	 * @return {Object[]} Normalized blocks.
 	 */
 	normalizeBlocks = ( blocks ) => {
-		return blocks.map( block => ( {
+		return blocks.map( ( block ) => ( {
 			id: block.id,
 			title: block.title.raw,
 			content: block.content.raw,
@@ -316,7 +316,7 @@ class Edit extends Component {
 						filteredBlocksList={ filteredBlocksList }
 						isFetching={ isFetching }
 						onItemSelect={ this.replaceWithCoreBlock }
-						onHover={ hoveredId => this.setState( { hoveredId } ) }
+						onHover={ ( hoveredId ) => this.setState( { hoveredId } ) }
 						searchID={ searchID }
 						searchKeywords={ this.normalizeSearchKeywords( searchKeyword ) }
 					/>

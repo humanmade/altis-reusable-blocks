@@ -83,7 +83,7 @@ class Relationships extends Component {
 	updateRelationshipsList = ( [ newRelationshipsList, headers ] ) => {
 		const { relationshipsList } = this.state;
 
-		if ( ! newRelationshipsList.every( item => relationshipsList.includes( item ) ) ) {
+		if ( ! newRelationshipsList.every( ( item ) => relationshipsList.includes( item ) ) ) {
 			const totalPages = parseInt( headers[ 'x-wp-totalpages' ], 10 );
 			const totalItems = parseInt( headers[ 'x-wp-total' ], 10 );
 

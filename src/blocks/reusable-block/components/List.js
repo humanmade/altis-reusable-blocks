@@ -121,12 +121,12 @@ class List extends Component {
 		return (
 			<div className="block-editor-reusable-blocks-inserter__list">
 				{
-					( ! sortedBlocks.length && isFetching ) || isFetching
+					isFetching
 						? ( <Placeholder><Spinner /></Placeholder> )
 						: (
 							<ul className="block-editor-block-types-list reusable-block-types-list">
 								{
-									sortedBlocks.map( block => (
+									sortedBlocks.map( ( block ) => (
 										<ListItem
 											key={ block.id }
 											onClick={ () => onItemSelect( block.id ) }
