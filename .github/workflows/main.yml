@@ -3,14 +3,11 @@ on: [push]
 
 jobs:
   build:
-    name: Build
+    name: Build and Check
     strategy:
       matrix:
-        php: [7.3]
+        php: [7.3, 7.4]
         node: [12.9.1]
-        phpunit: [7.5.15]
-        wpcs: [2.1.1]
-        vipcs: [2.0.0]
     runs-on: ubuntu-latest
     # each step has a 10 minute budget
     timeout-minutes: 10
@@ -29,7 +26,7 @@ jobs:
         echo "Update package lists."
         apt-get -y update
         echo "Install base packages."
-        apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken build-essential libssl-dev gnupg libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libicu-dev libxml2-dev vim wget unzip git subversion
+        apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken build-essential libssl-dev gnupg libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libicu-dev libxml2-dev libonig-dev vim wget unzip git
         echo "Add yarn package repository."
         curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
         echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
@@ -47,11 +44,7 @@ jobs:
         curl -sS https://getcomposer.org/installer | php
         mv composer.phar /usr/local/bin/composer
         echo "Install PHP extensions."
-        docker-php-ext-install -j$(nproc) iconv intl xml soap opcache pdo mbstring
-        docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
-        docker-php-ext-install -j$(nproc) gd
-        pecl install mcrypt-1.0.2
-        docker-php-ext-enable mcrypt
+        docker-php-ext-install -j$(nproc) iconv intl xml soap opcache pdo
 
     - name: Checkout repository
       uses: actions/checkout@v1
@@ -78,7 +71,7 @@ jobs:
 
     - name: Run yarn build
       run: |
-        yarn run build --if-present
+        yarn run build
 
     - name: Run composer validate
       run: |
@@ -88,22 +81,14 @@ jobs:
       run: |
         composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Install PHPUnit
-      run: |
-        composer global require "phpunit/phpunit=${{ matrix.phpunit }}"
-
     - name: Run PHPUnit
       run: |
-        ~/.composer/vendor/bin/phpunit --configuration "${GITHUB_WORKSPACE}/phpunit.xml.dist" --testsuite unit
-
-    - name: Install PHPCS with WordPress Coding Standards
-      run: |
-        composer global require dealerdirect/phpcodesniffer-composer-installer:0.5.0 phpcompatibility/phpcompatibility-wp:^2.1 wp-coding-standards/wpcs:${{ matrix.wpcs }} automattic/vipwpcs:${{ matrix.vipcs }}
+        composer test:unit
 
     - name: Run PHPCS Coding Standards
       run: |
-        ~/.composer/vendor/bin/phpcs --standard="${GITHUB_WORKSPACE}/phpcs.xml.dist" --runtime-set ignore_warnings_on_exit 1 "${GITHUB_WORKSPACE}"
+        composer run lint:phpcs
 
     - name: Run ESLint
       run: |
-        ./node_modules/.bin/eslint ./src
+        yarn lint:js
