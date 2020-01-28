@@ -52,7 +52,7 @@ class NamespaceTest extends TestCase {
 	 * @return void
 	 */
 	public function test_filter_allowed_block_types_array() {
-		$this->assertSame( Testee\filter_allowed_block_types( [] ), [ 'altis/reusable-block' ] );
+		$this->assertSame( Testee\filter_allowed_block_types( [] ), [ 'erb/reusable-block' ] );
 	}
 
 	/**
@@ -162,7 +162,7 @@ class NamespaceTest extends TestCase {
 	public function test_add_block_admin_bar_menu_items() {
 		Functions\stubTranslationFunctions();
 
-		$new_post_url = 'https://altis.local/wordpress/wp-admin/post-new.php?post_type=wp_block';
+		$new_post_url = 'https://erb.local/wordpress/wp-admin/post-new.php?post_type=wp_block';
 
 		Functions\expect( 'admin_url' )
 			->with( 'post-new.php?post_type=wp_block' )

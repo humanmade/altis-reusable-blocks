@@ -66,14 +66,14 @@ function enqueue_block_editor_assets() {
 }
 
 /**
- * Filter the allowed block types. If an array is provided, add `altis/reusable-block` to it, otherwise return the bool value that was passed in.
+ * Filter the allowed block types. If an array is provided, add `erb/reusable-block` to it, otherwise return the bool value that was passed in.
  *
  * @param bool|array $allowed_block_types Array of allowed block types or bool if it has not been filtered yet.
  * @return bool|array
  */
 function filter_allowed_block_types( $allowed_block_types ) {
 	if ( is_array( $allowed_block_types ) ) {
-		$allowed_block_types[] = 'altis/reusable-block';
+		$allowed_block_types[] = 'erb/reusable-block';
 	}
 
 	return $allowed_block_types;

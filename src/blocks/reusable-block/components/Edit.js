@@ -98,7 +98,7 @@ class Edit extends Component {
 		try {
 			const [ data ] = await fetchJson(
 				{
-					path: addQueryArgs( '/altis-erb/v1/search', { searchID } ),
+					path: addQueryArgs( '/erb/v1/search', { searchID } ),
 					signal: this.abortController.signal,
 				}
 			);

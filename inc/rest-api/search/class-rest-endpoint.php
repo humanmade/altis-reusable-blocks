@@ -37,7 +37,7 @@ class REST_Endpoint {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->namespace = 'altis-erb/v1';
+		$this->namespace = 'erb/v1';
 		$this->rest_base = 'search';
 	}
 

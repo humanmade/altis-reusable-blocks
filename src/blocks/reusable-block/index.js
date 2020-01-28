@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 import edit from './containers/Edit';
 
-export const name = 'altis/reusable-block';
+export const name = 'erb/reusable-block';
 
 export const options = {
 	category: 'common',

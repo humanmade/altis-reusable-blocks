@@ -30,7 +30,7 @@ function bootstrap() {
  * @return array
  */
 function get_post_types_with_reusable_blocks() : array {
-	return apply_filters( 'altis_post_types_with_reusable_blocks', [ BLOCK_POST_TYPE, POST_POST_TYPE ] );
+	return apply_filters( 'erb_post_types_with_reusable_blocks', [ BLOCK_POST_TYPE, POST_POST_TYPE ] );
 }
 
 /**

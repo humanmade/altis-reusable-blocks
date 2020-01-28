@@ -53,7 +53,7 @@ class Relationships extends Component {
 			const data = await fetchJson(
 				{
 					path: addQueryArgs(
-						`/altis-erb/v1/relationships`, {
+						`/erb/v1/relationships`, {
 							block_id: currentPostId,
 							page,
 						}
