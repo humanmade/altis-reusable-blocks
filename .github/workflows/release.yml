@@ -1,7 +1,7 @@
 on:
   create:
-  repository_dispatch:
-    types: [release]
+    tags:
+      - original/v*
 
 name: Create Release
 
@@ -10,19 +10,39 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      - name: Create Release
-        uses: technote-space/release-github-actions@v2
+      - uses: actions/checkout@v1
         with:
-          CLEAN_TEST_TAG: true
-          CLEAN_TARGETS: .[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml,node_modules,tests,*.xml.dist
-          COMMIT_MESSAGE: "Built release for ${{ steps.get_version.outputs.VERSION }}"
-          CREATE_MAJOR_VERSION_TAG: false
-          CREATE_MINOR_VERSION_TAG: false
-          CREATE_PATCH_VERSION_TAG: false
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ORIGINAL_TAG_PREFIX: original/
-          OUTPUT_BUILD_INFO_FILENAME: build.json
-          TEST_TAG_PREFIX: test/
+          path: 'build'
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+        run: |
+          cd "${GITHUB_WORKSPACE}/build"
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          TAG=$(echo "${GITHUB_REF}" | awk -F/ '{print $NF}')
+          VERSION=$(echo "${TAG}" | tr -d original/ | cut -d. -f-3)
+
+          // Install yarn deps and build the project.
+          yarn install
+          yarn build
+
+          // DELETE FILES
+          files=( .[!.]* __tests__ src *.js *.ts *.json *.lock _config.yml node_modules tests *.xml.dist )
+
+          for i in "${files[@]}"; do
+              rm -fr "$i"
+              echo removed $i
+          done
+
+          REMOTE="https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+
+          git add ./build
+
+          git commit -m 'Committing build for version ${VERSION}'
+
+          git push --force "${REMOTE}" gh-build
+
+          git tag -a ${VERSION} -m 'Built release for ${VERSION}'
+
+          git push --tags
