@@ -10,14 +10,18 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          path: 'build'
+          path: 'buildDir'
+      - uses: actions/checkout@v2
+        with:
+          ref: 'gh-build'
+          path: 'pushDir'
       - uses: actions/setup-node@v1
         with:
           node-version: '10.x'
         run: |
-          cd "${GITHUB_WORKSPACE}/build"
+          cd "${GITHUB_WORKSPACE}/buildDir"
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           TAG=$(echo "${GITHUB_REF}" | awk -F/ '{print $NF}')
@@ -27,12 +31,19 @@ jobs:
           yarn install
           yarn build
 
+          cp -r ./build "${GITHUB_WORKSPACE}/push/build"
+
+          cd "${GITHUB_WORKSPACE}/pushDir"
+
           // DELETE FILES
           files=( .[!.]* __tests__ src *.js *.ts *.json *.lock _config.yml node_modules tests *.xml.dist )
 
           for i in "${files[@]}"; do
-              rm -fr "$i"
-              echo removed $i
+              if [ $file != '.git' ]
+              then
+                    rm -fr "$file"
+                    echo removed $file
+                fi
           done
 
           REMOTE="https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
