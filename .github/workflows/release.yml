@@ -16,6 +16,9 @@ jobs:
           CLEAN_TEST_TAG: true
           CLEAN_TARGETS: .[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml,node_modules,tests,*.xml.dist
           COMMIT_MESSAGE: "Built release for ${{ github.ref }}"
+          CREATE_MAJOR_VERSION_TAG: false
+          CREATE_MINOR_VERSION_TAG: false
+          CREATE_PATCH_VERSION_TAG: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORIGINAL_TAG_PREFIX: original/
           OUTPUT_BUILD_INFO_FILENAME: build.json
