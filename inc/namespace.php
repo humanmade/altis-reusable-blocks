@@ -17,7 +17,6 @@ function bootstrap() {
 	REST_API\bootstrap();
 
 	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\enqueue_block_editor_assets' );
-	add_action( 'admin_menu', __NAMESPACE__ . '\\add_blocks_admin_menu' );
 	add_action( 'admin_bar_menu', __NAMESPACE__ . '\\add_block_admin_bar_menu_items', 100 );
 
 	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\insert_reusable_block_post_data', 10, 2 );
@@ -105,61 +104,6 @@ function insert_reusable_block_post_data( array $data, array $postarr ) : array 
 	}
 
 	return $data;
-}
-
-/**
- * Add the blocks main menu item, the add new submenu item, and the taxonomy submenu items.
- */
-function add_blocks_admin_menu() {
-	$post_type_obj = get_post_type_object( 'wp_block' );
-
-	$post_type_menu_href = 'edit.php?post_type=wp_block';
-	$add_new_menu_href = 'post-new.php?post_type=wp_block';
-	$edit_tags_file = 'edit-tags.php?taxonomy=%s&post_type=wp_block';
-
-	// Main menu item.
-	add_menu_page(
-		'',
-		esc_attr__( 'Reusable Blocks', 'enhanced-reusable-blocks' ),
-		$post_type_obj->cap->edit_posts,
-		$post_type_menu_href,
-		'',
-		'dashicons-screenoptions',
-		58
-	);
-
-	// Main menu item.
-	add_submenu_page(
-		$post_type_menu_href,
-		'',
-		esc_attr__( 'All Reusable Blocks', 'enhanced-reusable-blocks' ),
-		$post_type_obj->cap->edit_posts,
-		$post_type_menu_href
-	);
-
-	// Add New submenu item.
-	add_submenu_page(
-		$post_type_menu_href,
-		'',
-		esc_attr__( 'Add New' ),
-		$post_type_obj->cap->create_posts,
-		$add_new_menu_href
-	);
-
-	// Loop through supported taxonomies and add submenu item for each.
-	foreach ( get_taxonomies( [], 'objects' ) as $tax ) {
-		if ( ! $tax->show_ui || ! $tax->show_in_menu || ! in_array( 'wp_block', (array) $tax->object_type, true ) ) {
-			continue;
-		}
-
-		add_submenu_page(
-			$post_type_menu_href,
-			'',
-			esc_attr( $tax->labels->menu_name ),
-			$tax->cap->manage_terms,
-			sprintf( $edit_tags_file, $tax->name )
-		);
-	}
 }
 
 /**
