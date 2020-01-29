@@ -4,21 +4,11 @@ import { withSelect } from '@wordpress/data';
 import ReusableBlockEdit from '../components/Edit';
 
 export const mapSelectToProps = ( select ) => {
-	const {
-		getEntityRecords,
-		getTaxonomy,
-	} = select( 'core' );
-	const { getEditedPostAttribute } = select( 'core/editor' );
+	const { getEntityRecords } = select( 'core' );
 
-	const taxonomy = getTaxonomy( 'category' );
-
-	const categories = taxonomy ? getEditedPostAttribute( taxonomy.rest_base ) : [];
-	const [ postCategory ] = categories || [];
-
-	const categoriesList = getEntityRecords( 'taxonomy', 'category', { per_page: 100 } );
+	const categoriesList = getEntityRecords( 'taxonomy', 'wp_block_category', { per_page: 100 } );
 
 	return {
-		postCategory,
 		categoriesList,
 	};
 };

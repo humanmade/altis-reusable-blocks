@@ -23,7 +23,7 @@ class Edit extends Component {
 		hoveredId: null,
 		inputText: '',
 		isFetching: false,
-		searchCategory: this.props.postCategory,
+		searchCategory: null,
 		searchID: 0,
 		searchKeyword: '',
 	};
@@ -48,13 +48,6 @@ class Edit extends Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if (
-			this.props.postCategory !== prevProps.postCategory
-			&& this.state.searchCategory !== this.props.postCategory
-		) {
-			this.setState( { searchCategory: this.props.postCategory } );
-		}
-
 		if (
 			this.state.searchCategory !== prevState.searchCategory
 			|| this.state.searchKeyword !== prevState.searchKeyword
@@ -339,7 +332,6 @@ class Edit extends Component {
 
 Edit.propTypes = {
 	clientId: PropTypes.string,
-	postCategory: PropTypes.number,
 	categoriesList: PropTypes.array,
 };
 
