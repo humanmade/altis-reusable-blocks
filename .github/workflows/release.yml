@@ -10,12 +10,15 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Create Release
         uses: technote-space/release-github-actions@v2
         with:
           CLEAN_TEST_TAG: true
           CLEAN_TARGETS: .[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml,node_modules,tests,*.xml.dist
-          COMMIT_MESSAGE: "Built release for ${{ github.ref }}"
+          COMMIT_MESSAGE: "Built release for ${{ steps.get_version.outputs.VERSION }}"
           CREATE_MAJOR_VERSION_TAG: false
           CREATE_MINOR_VERSION_TAG: false
           CREATE_PATCH_VERSION_TAG: false
