@@ -129,7 +129,7 @@ class Edit extends Component {
 			}
 
 			if ( searchCategory ) {
-				queryArgs.categories = searchCategory;
+				queryArgs.wp_block_category = searchCategory;
 			}
 
 			const [ data ] = await fetchJson(

@@ -178,6 +178,8 @@ function admin_menu() {
 		$ptype_menu_position++;
 	}
 
+	// Disable globals sniff as it is safe to add to the menu and submenu globals.
+	// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
 	$menu[ $ptype_menu_position ] = [ esc_attr( $ptype_obj->labels->menu_name ), $ptype_obj->cap->edit_posts, $ptype_file, '', $menu_class, $ptype_menu_id, $menu_icon ];
 	$submenu[ $ptype_file ][5] = [ $ptype_obj->labels->all_items, $ptype_obj->cap->edit_posts, $ptype_file ];
 	$submenu[ $ptype_file ][10] = [ $ptype_obj->labels->add_new, $ptype_obj->cap->create_posts, $post_new_file ];
@@ -190,6 +192,7 @@ function admin_menu() {
 
 		$submenu[ $ptype_file ][ $i++ ] = [ esc_attr( $tax->labels->menu_name ), $tax->cap->manage_terms, sprintf( $edit_tags_file, $tax->name ) ];
 	}
+	// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 }
 
 
