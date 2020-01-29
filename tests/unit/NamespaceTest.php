@@ -22,9 +22,6 @@ class NamespaceTest extends TestCase {
 		Actions\expectAdded( 'enqueue_block_editor_assets' )
 			->with( 'EnhancedReusableBlocks\enqueue_block_editor_assets' );
 
-		Actions\expectAdded( 'admin_menu' )
-			->with( 'EnhancedReusableBlocks\add_blocks_admin_menu' );
-
 		Actions\expectAdded( 'admin_bar_menu' )
 			->with( 'EnhancedReusableBlocks\add_block_admin_bar_menu_items', 100 );
 
@@ -117,46 +114,6 @@ class NamespaceTest extends TestCase {
 		$new_data = Testee\insert_reusable_block_post_data( $data, [ 'ID' => 1 ] );
 
 		$this->assertSame( $post_name, $new_data['post_name'] );
-	}
-
-	public function test_add_blocks_admin_menu(){
-		$post_type_obj = \Mockery::mock( \WP_Post_Type::class );
-		$post_type_obj->cap = (object) [
-			'edit_posts'   => 'edit_wp_block',
-			'create_posts' => 'create_wp_block',
-		];
-
-		$fake_taxonomy = (object) [ 'show_ui' => false ];
-
-		$cat_taxonomy = (object) [
-			'cap'          => (object) [
-				'manage_terms' => 'manage_category',
-			],
-			'labels'       => (object) [
-				'menu_name'    => 'Categories',
-			],
-			'name'         => 'category',
-			'object_type'  => [ 'post', 'wp_block' ],
-			'show_ui'      => true,
-			'show_in_menu' => true,
-		];
-
-		Functions\expect( 'get_post_type_object' )
-			->with( 'wp_block' )
-			->andReturn( $post_type_obj );
-
-		Functions\expect( 'add_menu_page' );
-		Functions\stubTranslationFunctions();
-		Functions\stubEscapeFunctions();
-		Functions\expect( 'add_submenu_page' );
-		Functions\expect( 'get_taxonomies' )
-			->with( [], 'objects' )
-			->andReturn( [
-				$cat_taxonomy,
-				$fake_taxonomy,
-			] );
-
-		Testee\add_blocks_admin_menu();
 	}
 
 	public function test_add_block_admin_bar_menu_items() {
