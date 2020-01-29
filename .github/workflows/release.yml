@@ -20,6 +20,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '10.x'
+      - name: 'Build and tag new release version'
         run: |
           cd "${GITHUB_WORKSPACE}/buildDir"
           git config user.name "${GITHUB_ACTOR}"
