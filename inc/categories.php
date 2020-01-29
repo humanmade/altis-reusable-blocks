@@ -20,7 +20,7 @@ function register_block_categories() {
 			'singular_name'              => _x( 'Block Category', 'taxonomy singular name', 'enhanced-reusable-blocks' ),
 			'search_items'               => __( 'Search Block Categories', 'enhanced-reusable-blocks' ),
 			'popular_items'              => __( 'Popular Block Categories', 'enhanced-reusable-blocks' ),
-			'all_items'                  => __( 'All Writers', 'enhanced-reusable-blocks' ),
+			'all_items'                  => __( 'All Block Categories', 'enhanced-reusable-blocks' ),
 			'parent_item'                => null,
 			'parent_item_colon'          => null,
 			'edit_item'                  => __( 'Edit Block Category', 'enhanced-reusable-blocks' ),
