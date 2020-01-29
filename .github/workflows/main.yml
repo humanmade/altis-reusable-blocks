@@ -69,10 +69,6 @@ jobs:
       run: |
         yarn install
 
-    - name: Run yarn build
-      run: |
-        yarn run build
-
     - name: Run composer validate
       run: |
         composer validate
@@ -92,3 +88,7 @@ jobs:
     - name: Run ESLint
       run: |
         yarn lint:js
+
+    - name: Run yarn build
+      run: |
+        yarn run build
