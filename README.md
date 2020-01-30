@@ -1,13 +1,13 @@
-# Enhanced Reusable Blocks
+# Altis Reusable Blocks
 
-Enhanced Reusable Blocks provides enterprise workflows and added functionality for reusable blocks.
+Altis Reusable Blocks provides enterprise workflows and added functionality for reusable blocks.
 
-The main goals of Enhanced Reusable Blocks are to:
+The main goals of Altis Reusable Blocks are to:
 
 * provide a much more seamless implementation of reusable blocks into enterprise-level setups and workflows.
 * provide an improved user interface that allows for better block discovery, including search and filtering.
 
-![](https://github.com/humanmade/enhanced-reusable-blocks/workflows/CI%20Build/badge.svg)
+![](https://github.com/humanmade/altis-reusable-blocks/workflows/CI%20Build/badge.svg)
 
 ----
 
@@ -25,7 +25,7 @@ The main goals of Enhanced Reusable Blocks are to:
     * [PHP Tests](#php-tests)
 * [Usage](#usage)
   * [PHP Filters](#php-filters)
-    * [`erb_post_types_with_reusable_blocks`](#erb_post_types_with_reusable_blocks)
+    * [`altis_post_types_with_reusable_blocks`](#altis_post_types_with_reusable_blocks)
     * [`rest_get_relationship_item_additional_fields_schema`](#rest_get_relationship_item_additional_fields_schema)
     * [`rest_prepare_relationships_response`](#rest_prepare_relationships_response)
 * [Release Process](#release-process)
@@ -36,12 +36,12 @@ The main goals of Enhanced Reusable Blocks are to:
 
 ## Features
 
-Enhanced Reusable Blocks includes new features and improvements both for the creation and the discovery/usage of reusable blocks.
+Altis Reusable Blocks includes new features and improvements both for the creation and the discovery/usage of reusable blocks.
 
 #### Admin Bar and Menu
 
 By default, reusable blocks are somewhat hidden and can only be accessed from a submenu item in the block editor.
-With Enhanced Reusable Blocks, however, reusable blocks are upgraded to first-party citizens in the admin area.
+With Altis Reusable Blocks, however, reusable blocks are upgraded to first-party citizens in the admin area.
 
 Like for every other content type, the admin menu on the left now contains a dedicated submenu for reusable blocks, offering shortcuts to see all existing reusable blocks, to create a new reusable block, and to see and manage categories, as well as any other publicly available taxonomy registered for reusable blocks.
 Also, the admin bar at the top now contains a shortcut to create a new reusable block, just like it is possible to do for posts, media, pages or users.
@@ -76,7 +76,7 @@ If the provided ID is a post ID, the results will be all reusable blocks referen
 Install with [Composer](https://getcomposer.org):
 
 ```sh
-composer require humanmade/enhanced-reusable-blocks
+composer require humanmade/altis-reusable-blocks
 ```
 
 ### Build Process
@@ -123,7 +123,7 @@ composer test:unit -- --filter logging
 
 ### PHP Filters
 
-#### `erb_post_types_with_reusable_blocks`
+#### `altis_post_types_with_reusable_blocks`
 
 This filter allows the user to manipulate the post types that can use reusable blocks and should have the relationship for the shadow taxonomy.
 
@@ -135,7 +135,7 @@ This filter allows the user to manipulate the post types that can use reusable b
 
 ```php
 // Add the "page" post type.
-add_filter( 'erb_post_types_with_reusable_blocks', function ( aray $post_types ): array {
+add_filter( 'altis_post_types_with_reusable_blocks', function ( aray $post_types ): array {
 
 	$post_types[] = 'page';
 

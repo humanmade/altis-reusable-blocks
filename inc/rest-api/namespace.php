@@ -1,6 +1,6 @@
 <?php
 
-namespace EnhancedReusableBlocks\REST_API;
+namespace Altis\ReusableBlocks\REST_API;
 
 /**
  * Bootstrap it up!

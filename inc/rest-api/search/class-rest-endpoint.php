@@ -3,9 +3,9 @@
  * Custom REST API endpoint for reusable block search functionality.
  */
 
-namespace EnhancedReusableBlocks\REST_API\Search;
+namespace Altis\ReusableBlocks\REST_API\Search;
 
-use EnhancedReusableBlocks\Connections;
+use Altis\ReusableBlocks\Connections;
 
 use WP_Error;
 use WP_Query;
@@ -37,7 +37,7 @@ class REST_Endpoint {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->namespace = 'erb/v1';
+		$this->namespace = 'altis-reusable-blocks/v1';
 		$this->rest_base = 'search';
 	}
 
@@ -76,16 +76,16 @@ class REST_Endpoint {
 
 		if ( empty( $search_id ) ) {
 			return new WP_Error(
-				'erb.no_search_id_provided',
-				__( 'No `searchID` parameter provided.', 'enhanced-reusable-blocks' ),
+				'altis.reusable_blocks.no_search_id_provided',
+				__( 'No `searchID` parameter provided.', 'altis-reusable-blocks' ),
 				[ 'status' => 404 ]
 			);
 		}
 
 		if ( ! is_numeric( $search_id ) ) {
 			return new WP_Error(
-				'erb.invalid_search_id_provided',
-				__( 'Invalid `searchID` parameter provided.', 'enhanced-reusable-blocks' ),
+				'altis.reusable_blocks.invalid_search_id_provided',
+				__( 'Invalid `searchID` parameter provided.', 'altis-reusable-blocks' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -93,8 +93,8 @@ class REST_Endpoint {
 		if ( ! $post = get_post( intval( $search_id ) ) ) {
 			// translators: %d is the search ID requested via REST API.
 			return new WP_Error(
-				'erb.not_post_found',
-				sprintf( __( 'The requested post ID of %d not found.', 'enhanced-reusable-blocks' ), $search_id ),
+				'altis.reusable_blocks.not_post_found',
+				sprintf( __( 'The requested post ID of %d not found.', 'altis-reusable-blocks' ), $search_id ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -132,8 +132,8 @@ class REST_Endpoint {
 		// Handle if error.
 		if ( $response->is_error() ) {
 			return new WP_Error(
-				'erb.rest_error_blocks_by_id',
-				__( 'There was an error encountered when retrieving blocks from ID.', 'enhanced-reusable-blocks' ),
+				'altis.reusable_blocks.rest_error_blocks_by_id',
+				__( 'There was an error encountered when retrieving blocks from ID.', 'altis-reusable-blocks' ),
 				[ 'status' => 404 ]
 			);
 		}

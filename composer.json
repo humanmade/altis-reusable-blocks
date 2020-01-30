@@ -1,5 +1,5 @@
 {
-    "name": "humanmade/enhanced-reusable-blocks",
+    "name": "humanmade/altis-reusable-blocks",
     "description": "Adds functionality to reusable blocks to enhance their usage.",
     "license": "GPL-2.0-or-later",
     "type": "wordpress-plugin",
@@ -19,10 +19,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "EnhancedReusableBlocks\\Tests\\Unit\\": "tests/unit/",
-            "EnhancedReusableBlocks\\REST_API\\": "rest-api/",
-            "EnhancedReusableBlocks\\REST_API\\Relationships\\": "rest-api/relationships/",
-            "EnhancedReusableBlocks\\REST_API\\Search\\": "rest-api/search/"
+            "Altis\\ReusableBlocks\\Tests\\Unit\\": "tests/unit/",
+            "Altis\\ReusableBlocks\\REST_API\\": "rest-api/",
+            "Altis\\ReusableBlocks\\REST_API\\Relationships\\": "rest-api/relationships/",
+            "Altis\\ReusableBlocks\\REST_API\\Search\\": "rest-api/search/"
         },
         "files": [
             "inc/namespace.php",

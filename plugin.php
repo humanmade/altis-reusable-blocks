@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: Enhanced Reusable Blocks
+ * Plugin Name: Altis Reusable Blocks
  * Version: 1.0.0
  * Description: Adds functionality to reusable blocks to make their usage more robust.
  * Author: Human Made Inc.
  * Author URI: https://humanmade.com
- * Text Domain: enhanced-reusable-blocks
+ * Text Domain: altis-reusable-blocks
  * License: GPL-2.0+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-namespace EnhancedReusableBlocks;
+namespace Altis\ReusableBlocks;
 
 defined( 'ABSPATH' ) || die;
 

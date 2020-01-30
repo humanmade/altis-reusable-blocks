@@ -4,18 +4,18 @@
  * to connect the `wp_block` post type to the `post` post type.
  */
 
-namespace EnhancedReusableBlocks\Connections;
+namespace Altis\ReusableBlocks\Connections;
 
 use WP_Post;
 use WP_Term;
 
-use const EnhancedReusableBlocks\BLOCK_POST_TYPE;
+use const Altis\ReusableBlocks\BLOCK_POST_TYPE;
 
 const POST_POST_TYPE = 'post';
 const RELATIONSHIP_TAXONOMY = 'wp_block_to_post';
 
 /**
- * EnhancedReusableBlocks\Connections Bootstrap.
+ * Altis\ReusableBlocks\Connections Bootstrap.
  */
 function bootstrap() {
 	add_action( 'init',                __NAMESPACE__ . '\\register_relationship_taxonomy' );
@@ -30,7 +30,7 @@ function bootstrap() {
  * @return array
  */
 function get_post_types_with_reusable_blocks() : array {
-	return apply_filters( 'erb_post_types_with_reusable_blocks', [ BLOCK_POST_TYPE, POST_POST_TYPE ] );
+	return apply_filters( 'altis_post_types_with_reusable_blocks', [ BLOCK_POST_TYPE, POST_POST_TYPE ] );
 }
 
 /**

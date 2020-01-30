@@ -3,10 +3,10 @@
  * Custom REST API endpoint for block relationship data.
  */
 
-namespace EnhancedReusableBlocks\REST_API\Relationships;
+namespace Altis\ReusableBlocks\REST_API\Relationships;
 
-use EnhancedReusableBlocks\Connections;
-use EnhancedReusableBlocks;
+use Altis\ReusableBlocks\Connections;
+use Altis\ReusableBlocks;
 
 use WP_Error;
 use WP_Query;
@@ -40,7 +40,7 @@ class REST_Endpoint {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->namespace = 'erb/v1';
+		$this->namespace = 'altis-reusable-blocks/v1';
 		$this->rest_base = 'relationships';
 	}
 
@@ -60,7 +60,7 @@ class REST_Endpoint {
 							'default'  => 'view',
 						],
 						'block_id' => [
-							'description' => esc_html__( 'Block ID to get the relationship data for.', 'enhanced-reusable-blocks' ),
+							'description' => esc_html__( 'Block ID to get the relationship data for.', 'altis-reusable-blocks' ),
 							'required'    => true,
 							'type'        => 'integer',
 						],
@@ -79,7 +79,7 @@ class REST_Endpoint {
 	public function get_item_schema() {
 		$schema = [
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => __( 'Block relationships', 'enhanced-reusable-blocks' ),
+			'title'      => __( 'Block relationships', 'altis-reusable-blocks' ),
 			'type'       => 'object',
 			'properties' => [
 				'id'     => [
@@ -164,8 +164,8 @@ class REST_Endpoint {
 
 		if ( empty( $block_id ) ) {
 			return new WP_Error(
-				'erb.no_block_id_provided',
-				__( 'No `block_id` parameter provided.', 'enhanced-reusable-blocks' ),
+				'altis.reusable_blocks.no_block_id_provided',
+				__( 'No `block_id` parameter provided.', 'altis-reusable-blocks' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -173,16 +173,16 @@ class REST_Endpoint {
 		if ( ! $post = get_post( $block_id ) ) {
 			// translators: %d is the post ID that relationships were requested via REST API.
 			return new WP_Error(
-				'erb.not_block_found',
-				sprintf( __( 'The requested post ID of %d not found.', 'enhanced-reusable-blocks' ), $block_id ),
+				'altis.reusable_blocks.not_block_found',
+				sprintf( __( 'The requested post ID of %d not found.', 'altis-reusable-blocks' ), $block_id ),
 				[ 'status' => 404 ]
 			);
 		}
 
 		if ( $post->post_type !== 'wp_block' ) {
 			return new WP_Error(
-				'erb.not_block_post_type',
-				__( 'The requested post ID was not of the post type `wp_block`.', 'enhanced-reusable-blocks' ),
+				'altis.reusable_blocks.not_block_post_type',
+				__( 'The requested post ID was not of the post type `wp_block`.', 'altis-reusable-blocks' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -198,7 +198,7 @@ class REST_Endpoint {
 
 		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		$query_args = [
-			'posts_per_page' => EnhancedReusableBlocks\RELATIONSHIPS_PER_PAGE,
+			'posts_per_page' => Altis\ReusableBlocks\RELATIONSHIPS_PER_PAGE,
 			'paged'          => $page ?? 1,
 			'post_type'      => Connections\get_post_types_with_reusable_blocks(),
 			'post_status'    => 'any',
@@ -220,13 +220,13 @@ class REST_Endpoint {
 			return [];
 		}
 
-		$max_pages = ceil( $total_posts / EnhancedReusableBlocks\RELATIONSHIPS_PER_PAGE );
+		$max_pages = ceil( $total_posts / Altis\ReusableBlocks\RELATIONSHIPS_PER_PAGE );
 
 		// Return error if requested invalid page number.
 		if ( $page > $max_pages && $total_posts > 0 ) {
 			return new WP_Error(
 				'rest_post_invalid_page_number',
-				__( 'The page number requested is larger than the number of pages available.', 'enhanced-reusable-blocks' ),
+				__( 'The page number requested is larger than the number of pages available.', 'altis-reusable-blocks' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -243,8 +243,8 @@ class REST_Endpoint {
 		// Handle if error.
 		if ( $response->is_error() ) {
 			return new WP_Error(
-				'erb.relationships_error',
-				__( 'Encountered error retrieving relationship data.', 'enhanced-reusable-blocks' ),
+				'altis.reusable_blocks.relationships_error',
+				__( 'Encountered error retrieving relationship data.', 'altis-reusable-blocks' ),
 				[ 'status' => 404 ]
 			);
 		}
