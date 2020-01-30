@@ -1,8 +1,8 @@
-# Enhanced Reusable Blocks
+# Altis Reusable Blocks
 
-Enhanced Reusable Blocks provides enterprise workflows and added functionality for reusable blocks.
+Altis Reusable Blocks provides enterprise workflows and added functionality for reusable blocks.
 
-The main goals of Enhanced Reusable Blocks are to:
+The main goals of Altis Reusable Blocks are to:
 
 * provide a much more seamless implementation of reusable blocks into enterprise-level setups and workflows.
 * provide an improved user interface that allows for better block discovery, including search and filtering.
@@ -36,12 +36,12 @@ The main goals of Enhanced Reusable Blocks are to:
 
 ## Features
 
-Enhanced Reusable Blocks includes new features and improvements both for the creation and the discovery/usage of reusable blocks.
+Altis Reusable Blocks includes new features and improvements both for the creation and the discovery/usage of reusable blocks.
 
 #### Admin Bar and Menu
 
 By default, reusable blocks are somewhat hidden and can only be accessed from a submenu item in the block editor.
-With Enhanced Reusable Blocks, however, reusable blocks are upgraded to first-party citizens in the admin area.
+With Altis Reusable Blocks, however, reusable blocks are upgraded to first-party citizens in the admin area.
 
 Like for every other content type, the admin menu on the left now contains a dedicated submenu for reusable blocks, offering shortcuts to see all existing reusable blocks, to create a new reusable block, and to see and manage categories, as well as any other publicly available taxonomy registered for reusable blocks.
 Also, the admin bar at the top now contains a shortcut to create a new reusable block, just like it is possible to do for posts, media, pages or users.
