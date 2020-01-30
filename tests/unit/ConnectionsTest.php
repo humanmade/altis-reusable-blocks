@@ -1,10 +1,10 @@
 <?php
 
-namespace EnhancedReusableBlocks\Tests\Unit;
+namespace Altis\ReusableBlocks\Tests\Unit;
 
-use EnhancedReusableBlocks\Tests\Unit\TestCase;
-use EnhancedReusableBlocks\Connections as Testee;
-use const EnhancedReusableBlocks\BLOCK_POST_TYPE;
+use Altis\ReusableBlocks\Tests\Unit\TestCase;
+use Altis\ReusableBlocks\Connections as Testee;
+use const Altis\ReusableBlocks\BLOCK_POST_TYPE;
 
 use Brain\Monkey\Actions;
 use Brain\Monkey\Filters;
@@ -19,16 +19,16 @@ class ConnectionsTest extends TestCase {
 	 */
 	public function test_bootstrap() {
 		Actions\expectAdded( 'init' )
-			->with( 'EnhancedReusableBlocks\Connections\register_relationship_taxonomy' );
+			->with( 'Altis\ReusableBlocks\Connections\register_relationship_taxonomy' );
 
 		Actions\expectAdded( 'wp_insert_post' )
-			->with( 'EnhancedReusableBlocks\Connections\maybe_create_shadow_term', 10, 2 );
+			->with( 'Altis\ReusableBlocks\Connections\maybe_create_shadow_term', 10, 2 );
 
 		Actions\expectAdded( 'before_delete_post' )
-			->with( 'EnhancedReusableBlocks\Connections\delete_shadow_term' );
+			->with( 'Altis\ReusableBlocks\Connections\delete_shadow_term' );
 
 		Actions\expectAdded( 'post_updated' )
-			->with( 'EnhancedReusableBlocks\Connections\synchronize_associated_terms', 10, 3 );
+			->with( 'Altis\ReusableBlocks\Connections\synchronize_associated_terms', 10, 3 );
 
 		Testee\bootstrap();
 	}

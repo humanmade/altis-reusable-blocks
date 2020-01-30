@@ -10,7 +10,7 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-namespace EnhancedReusableBlocks;
+namespace Altis\ReusableBlocks;
 
 defined( 'ABSPATH' ) || die;
 

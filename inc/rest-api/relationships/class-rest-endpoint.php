@@ -3,10 +3,10 @@
  * Custom REST API endpoint for block relationship data.
  */
 
-namespace EnhancedReusableBlocks\REST_API\Relationships;
+namespace Altis\ReusableBlocks\REST_API\Relationships;
 
-use EnhancedReusableBlocks\Connections;
-use EnhancedReusableBlocks;
+use Altis\ReusableBlocks\Connections;
+use Altis\ReusableBlocks;
 
 use WP_Error;
 use WP_Query;
@@ -198,7 +198,7 @@ class REST_Endpoint {
 
 		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		$query_args = [
-			'posts_per_page' => EnhancedReusableBlocks\RELATIONSHIPS_PER_PAGE,
+			'posts_per_page' => Altis\ReusableBlocks\RELATIONSHIPS_PER_PAGE,
 			'paged'          => $page ?? 1,
 			'post_type'      => Connections\get_post_types_with_reusable_blocks(),
 			'post_status'    => 'any',
@@ -220,7 +220,7 @@ class REST_Endpoint {
 			return [];
 		}
 
-		$max_pages = ceil( $total_posts / EnhancedReusableBlocks\RELATIONSHIPS_PER_PAGE );
+		$max_pages = ceil( $total_posts / Altis\ReusableBlocks\RELATIONSHIPS_PER_PAGE );
 
 		// Return error if requested invalid page number.
 		if ( $page > $max_pages && $total_posts > 0 ) {

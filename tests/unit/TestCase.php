@@ -1,6 +1,6 @@
 <?php
 
-namespace EnhancedReusableBlocks\Tests\Unit;
+namespace Altis\ReusableBlocks\Tests\Unit;
 
 use Brain\Monkey;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;

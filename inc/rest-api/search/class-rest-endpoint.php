@@ -3,9 +3,9 @@
  * Custom REST API endpoint for reusable block search functionality.
  */
 
-namespace EnhancedReusableBlocks\REST_API\Search;
+namespace Altis\ReusableBlocks\REST_API\Search;
 
-use EnhancedReusableBlocks\Connections;
+use Altis\ReusableBlocks\Connections;
 
 use WP_Error;
 use WP_Query;

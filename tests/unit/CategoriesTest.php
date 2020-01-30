@@ -1,9 +1,9 @@
 <?php
 
-namespace EnhancedReusableBlocks\Tests\Unit;
+namespace Altis\ReusableBlocks\Tests\Unit;
 
-use EnhancedReusableBlocks\Tests\Unit\TestCase;
-use EnhancedReusableBlocks\Categories as Testee;
+use Altis\ReusableBlocks\Tests\Unit\TestCase;
+use Altis\ReusableBlocks\Categories as Testee;
 
 use Brain\Monkey\Actions;
 use Brain\Monkey\Functions;
@@ -17,7 +17,7 @@ class CategoriesTest extends TestCase {
 	 */
 	public function test_bootstrap() {
 		Actions\expectAdded( 'init' )
-			->with( 'EnhancedReusableBlocks\Categories\register_block_categories' );
+			->with( 'Altis\ReusableBlocks\Categories\register_block_categories' );
 
 		Testee\bootstrap();
 	}

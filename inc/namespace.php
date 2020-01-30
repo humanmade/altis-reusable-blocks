@@ -1,15 +1,15 @@
 <?php
 
-namespace EnhancedReusableBlocks;
+namespace Altis\ReusableBlocks;
 
-use EnhancedReusableBlocks\Connections;
+use Altis\ReusableBlocks\Connections;
 use Asset_Loader;
 
 const BLOCK_POST_TYPE = 'wp_block';
 const RELATIONSHIPS_PER_PAGE = 10;
 
 /**
- * EnhancedReusableBlocks Bootstrap.
+ * Altis\ReusableBlocks Bootstrap.
  */
 function bootstrap() {
 	Categories\bootstrap();
@@ -63,7 +63,7 @@ function enqueue_block_editor_assets() {
 		'relationshipsPerPage' => RELATIONSHIPS_PER_PAGE,
 	];
 
-	wp_localize_script( 'altis-reusable-blocks', 'altisReusableBlocksSettings', $settings );
+	wp_localize_script( 'altis-reusable-blocks', 'Altis\ReusableBlocksSettings', $settings );
 }
 
 /**

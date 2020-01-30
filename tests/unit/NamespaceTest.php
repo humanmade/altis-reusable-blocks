@@ -1,10 +1,10 @@
 <?php
 
-namespace EnhancedReusableBlocks\Tests\Unit;
+namespace Altis\ReusableBlocks\Tests\Unit;
 
-use EnhancedReusableBlocks\Tests\Unit\TestCase;
-use EnhancedReusableBlocks as Testee;
-use const EnhancedReusableBlocks\Connections\POST_POST_TYPE;
+use Altis\ReusableBlocks\Tests\Unit\TestCase;
+use Altis\ReusableBlocks as Testee;
+use const Altis\ReusableBlocks\Connections\POST_POST_TYPE;
 
 use Brain\Monkey\Actions;
 use Brain\Monkey\Filters;
@@ -20,16 +20,16 @@ class NamespaceTest extends TestCase {
 	public function test_bootstrap() {
 
 		Actions\expectAdded( 'enqueue_block_editor_assets' )
-			->with( 'EnhancedReusableBlocks\enqueue_block_editor_assets' );
+			->with( 'Altis\ReusableBlocks\enqueue_block_editor_assets' );
 
 		Actions\expectAdded( 'admin_bar_menu' )
-			->with( 'EnhancedReusableBlocks\add_block_admin_bar_menu_items', 100 );
+			->with( 'Altis\ReusableBlocks\add_block_admin_bar_menu_items', 100 );
 
 		Filters\expectAdded( 'wp_insert_post_data' )
-		 	->with( 'EnhancedReusableBlocks\insert_reusable_block_post_data', 10, 2 );
+		 	->with( 'Altis\ReusableBlocks\insert_reusable_block_post_data', 10, 2 );
 
 		Filters\expectAdded( 'allowed_block_types' )
-			 ->with( 'EnhancedReusableBlocks\filter_allowed_block_types', 20 );
+			 ->with( 'Altis\ReusableBlocks\filter_allowed_block_types', 20 );
 
 		Testee\bootstrap();
 	}

@@ -1,3 +1,3 @@
-const { enhancedReusableBlocksSettings } = window;
+const { Altis\ReusableBlocksSettings } = window;
 
-export default enhancedReusableBlocksSettings;
+export default Altis\ReusableBlocksSettings;

@@ -1,6 +1,6 @@
 <?php
 
-namespace EnhancedReusableBlocks\Categories;
+namespace Altis\ReusableBlocks\Categories;
 
 /**
  * Bootstrap it up!
