@@ -36,7 +36,7 @@ function enqueue_block_editor_assets() {
 		plugin_dir_path( PLUGIN_FILE ) . 'build/asset-manifest.json',
 		'index.js',
 		[
-			'handle'  => 'enhanced-reusable-blocks',
+			'handle'  => 'altis-reusable-blocks',
 			'scripts' => [
 				'wp-api-fetch',
 				'wp-blocks',
@@ -54,7 +54,7 @@ function enqueue_block_editor_assets() {
 		]
 	);
 
-	$erb_settings = [
+	$settings = [
 		'editPostUrl' => admin_url( 'post.php?post=%d&action=edit' ),
 		'context' => [
 			'postId'   => get_the_ID(),
@@ -63,18 +63,18 @@ function enqueue_block_editor_assets() {
 		'relationshipsPerPage' => RELATIONSHIPS_PER_PAGE,
 	];
 
-	wp_localize_script( 'enhanced-reusable-blocks', 'enhancedReusableBlocksSettings', $erb_settings );
+	wp_localize_script( 'altis-reusable-blocks', 'altisReusableBlocksSettings', $settings );
 }
 
 /**
- * Filter the allowed block types. If an array is provided, add `erb/reusable-block` to it, otherwise return the bool value that was passed in.
+ * Filter the allowed block types. If an array is provided, add `altis/reusable-block` to it, otherwise return the bool value that was passed in.
  *
  * @param bool|array $allowed_block_types Array of allowed block types or bool if it has not been filtered yet.
  * @return bool|array
  */
 function filter_allowed_block_types( $allowed_block_types ) {
 	if ( is_array( $allowed_block_types ) ) {
-		$allowed_block_types[] = 'erb/reusable-block';
+		$allowed_block_types[] = 'altis/reusable-block';
 	}
 
 	return $allowed_block_types;
@@ -206,7 +206,7 @@ function add_block_admin_bar_menu_items( \WP_Admin_Bar $wp_admin_bar ) {
 		[
 			'parent' => 'new-content',
 			'id'     => 'new-wp_block',
-			'title'  => __( 'Reusable Block', 'enhanced-reusable-blocks' ),
+			'title'  => __( 'Reusable Block', 'altis-reusable-blocks' ),
 			'href'   => admin_url( 'post-new.php?post_type=wp_block' ),
 		]
 	);

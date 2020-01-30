@@ -8,15 +8,15 @@ import settings from '../../../settings';
 const { editPostUrl } = settings;
 
 const RelationshipItem = ( { id, status, title } ) => {
-	const itemTitle = title.rendered || __( '(No Title)', 'enhanced-reusable-blocks' );
+	const itemTitle = title.rendered || __( '(No Title)', 'altis-reusable-blocks' );
 
 	return (
 		<PanelRow key={ id }>
 			<a target="_blank" rel="noopener noreferrer" href={ sprintf( editPostUrl, id ) }>
 				{ `#${ id } - ${ itemTitle }` }
 			</a>
-			{ status === 'draft' && __( '(Draft)', 'enhanced-reusable-blocks' ) }
-			{ status === 'pending' && __( '(Pending)', 'enhanced-reusable-blocks' ) }
+			{ status === 'draft' && __( '(Draft)', 'altis-reusable-blocks' ) }
+			{ status === 'pending' && __( '(Pending)', 'altis-reusable-blocks' ) }
 		</PanelRow>
 	);
 };

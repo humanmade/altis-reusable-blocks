@@ -91,7 +91,7 @@ class Edit extends Component {
 		try {
 			const [ data ] = await fetchJson(
 				{
-					path: addQueryArgs( '/erb/v1/search', { searchID } ),
+					path: addQueryArgs( '/altis-reusable-blocks/v1/search', { searchID } ),
 					signal: this.abortController.signal,
 				}
 			);
@@ -99,7 +99,7 @@ class Edit extends Component {
 			this.updateBlocksList( data );
 		} catch ( e ) {
 			/* eslint-disable no-console */
-			console.error( __( 'Error retrieving blocks by post or block ID.', 'enhanced-reusable-blocks' ) );
+			console.error( __( 'Error retrieving blocks by post or block ID.', 'altis-reusable-blocks' ) );
 			console.error( e );
 			/* eslint-enable no-console */
 
@@ -142,7 +142,7 @@ class Edit extends Component {
 			this.updateBlocksList( data );
 		} catch ( e ) {
 			/* eslint-disable no-console */
-			console.error( __( 'Error retrieving blocks.', 'enhanced-reusable-blocks' ) );
+			console.error( __( 'Error retrieving blocks.', 'altis-reusable-blocks' ) );
 			console.error( e );
 			/* eslint-enable no-console */
 
@@ -165,7 +165,7 @@ class Edit extends Component {
 			id: block.id,
 			title: block.title.raw,
 			content: block.content.raw,
-			categories: block.categories,
+			categories: block.wp_block_category,
 		} ) );
 	};
 

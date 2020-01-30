@@ -1,14 +1,14 @@
 {
-  "name": "enhanced-reusable-blocks",
+  "name": "altis-reusable-blocks",
   "version": "1.0.0",
   "description": "Adds functionality to reusable blocks to enhance their usage.",
   "author": "Human Made Inc.",
   "license": "GPL-2.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/humanmade/enhanced-reusable-blocks.git"
+    "url": "https://github.com/humanmade/altis-reusable-blocks.git"
   },
-  "bugs": "https://github.com/humanmade/enhanced-reusable-blocks/issues",
+  "bugs": "https://github.com/humanmade/altis-reusable-blocks/issues",
   "dependencies": {
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2"

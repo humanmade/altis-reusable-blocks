@@ -20,8 +20,8 @@ import RelationshipItem from './RelationshipItem';
 
 const { relationshipsPerPage } = settings;
 
-const baseClassName = 'erb-relationships';
-const sidebarName = 'erb-relationships';
+const baseClassName = 'altis-reusable-block-relationships';
+const sidebarName = 'altis-reusable-block-relationships';
 
 class Relationships extends Component {
 	state = {
@@ -53,7 +53,7 @@ class Relationships extends Component {
 			const data = await fetchJson(
 				{
 					path: addQueryArgs(
-						`/erb/v1/relationships`, {
+						`/altis-reusable-blocks/v1/relationships`, {
 							block_id: currentPostId,
 							page,
 						}
@@ -138,7 +138,7 @@ class Relationships extends Component {
 			totalItems,
 		} = this.state;
 
-		const title = __( 'Relationships', 'enhanced-reusable-blocks' );
+		const title = __( 'Relationships', 'altis-reusable-blocks' );
 
 		const startIndex = currentPage === 1 ? 0 : ( currentPage - 1 ) * relationshipsPerPage;
 
@@ -147,7 +147,7 @@ class Relationships extends Component {
 			? items.map( ( relationshipItem ) => {
 				return ( <RelationshipItem { ...relationshipItem } key={ relationshipItem.id } /> );
 			} )
-			: <PanelRow>{ __( 'No Relationships to Display', 'enhanced-reusable-blocks' ) }</PanelRow>;
+			: <PanelRow>{ __( 'No Relationships to Display', 'altis-reusable-blocks' ) }</PanelRow>;
 
 		return (
 			<Fragment>
