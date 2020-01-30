@@ -211,7 +211,10 @@ If you are using Composer to pull this plugin into your website build, choose yo
 ### Publishing a Release
 
 Release management is done using GitHub's built-in Releases functionality.
-Each release is tagged using the according version number, for example, the version 1.2.3 of this plugin woul have the tag name `v1.2.3`.
-Releases can be created off the `master` branch, which is true for scheduled releases, or from a new banch based off the previous tag.
+Each release is tagged using the according version number, for example, the version 1.2.3 of this plugin would have the tag name `v1.2.3`.
+Releases should be created off the `master` branch, and tagged in the correct format.
+When a release is tagged in the correct format of `v*.*.*`, the GitHub actions release workflow creates a new built release based on the original release you just created.
+It will copy the tag's current state to a new tag of `original/v.*.*.*` and then build the project and push the built version to the original tag name `v*.*.*`.
+This allows composer to pull in a built version of the project without the need to run webpack to use it.
 
 For better information management, every release should come with complete, but high-level Release Notes, detailing all _New Features_, _Enhancements_, _Bug Fixes_ and potential other changes included in the according version.
