@@ -63,7 +63,7 @@ function enqueue_block_editor_assets() {
 		'relationshipsPerPage' => RELATIONSHIPS_PER_PAGE,
 	];
 
-	wp_localize_script( 'altis-reusable-blocks', 'Altis\ReusableBlocksSettings', $settings );
+	wp_localize_script( 'altis-reusable-blocks', 'altisReusableBlocksSettings', $settings );
 }
 
 /**
