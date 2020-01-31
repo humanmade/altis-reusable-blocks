@@ -67,8 +67,15 @@ class List extends Component {
 				 * search term within the title and content and weigh those more heavily.
 				 */
 				if ( searchKeywords.length > 2 ) {
-					const [ titleXMatches, contentXMatches ] = this.getMatchCounts( searchKeywords.join( ' ' ), blockX );
-					const [ titleYMatches, contentYMatches ] = this.getMatchCounts( searchKeywords.join( ' ' ), blockY );
+					const [
+						titleXMatches,
+						contentXMatches,
+					] = this.getMatchCounts( searchKeywords.join( ' ' ), blockX );
+
+					const [
+						titleYMatches,
+						contentYMatches,
+					] = this.getMatchCounts( searchKeywords.join( ' ' ), blockY );
 
 					const titleXScore = titleXMatches * TITLE_EXACT_MATCH_WEIGHT;
 					const contentXScore = contentXMatches * CONTENT_EXACT_MATCH_WEIGHT;
@@ -82,8 +89,15 @@ class List extends Component {
 
 				// Loop through each string in searchKeywords, test for matches, and weigh those normally.
 				searchKeywords.forEach( ( keyword ) => {
-					const [ titleXMatches, contentXMatches ] = this.getMatchCounts( keyword, blockX );
-					const [ titleYMatches, contentYMatches ] = this.getMatchCounts( keyword, blockY );
+					const [
+						titleXMatches,
+						contentXMatches,
+					] = this.getMatchCounts( keyword, blockX );
+
+					const [
+						titleYMatches,
+						contentYMatches,
+					] = this.getMatchCounts( keyword, blockY );
 
 					const titleXScore = titleXMatches * TITLE_WEIGHT;
 					const contentXScore = contentXMatches * CONTENT_WEIGHT;
