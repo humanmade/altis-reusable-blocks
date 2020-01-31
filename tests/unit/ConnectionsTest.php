@@ -555,6 +555,10 @@ class ConnectionsTest extends TestCase {
 			->with( $post_id, 'shadow_term_id', true )
 			->andReturn( 1 );
 
+		Functions\expect( 'wp_cache_delete' )
+			->with( sprintf( Testee\BLOCK_USAGE_COUNT_CACHE_KEY_FORMAT, 2 ) )
+			->andReturn( true );
+
 		Functions\expect( 'wp_set_object_terms' )
 			->with( $post_id, [ 1 ], Testee\RELATIONSHIP_TAXONOMY )
 			->andReturn( [ 'term_id' => 1, 'taxonomy_term_id' => 1 ] );
