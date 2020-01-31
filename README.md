@@ -38,6 +38,12 @@ The main goals of Altis Reusable Blocks are to:
 
 Altis Reusable Blocks includes new features and improvements both for the creation and the discovery/usage of reusable blocks.
 
+#### Relationship and usage tracking
+
+Keep track of all usages of reusable blocks within your posts. Within the edit screen for your reusable blocks, you will find the Relationships sidebar with a paginated view of all the posts that are using the reusable block that you are currently editing.
+
+On the reusable blocks post list table, you can see at a quick glance the usage count for that reusable block.
+
 #### Admin Bar and Menu
 
 By default, reusable blocks are somewhat hidden and can only be accessed from a submenu item in the block editor.
