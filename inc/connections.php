@@ -7,21 +7,25 @@
 namespace Altis\ReusableBlocks\Connections;
 
 use WP_Post;
+use WP_Query;
 use WP_Term;
 
 use const Altis\ReusableBlocks\BLOCK_POST_TYPE;
 
 const POST_POST_TYPE = 'post';
 const RELATIONSHIP_TAXONOMY = 'wp_block_to_post';
+const BLOCK_USAGE_COUNT_CACHE_KEY_FORMAT = 'block_usage_count_%d';
 
 /**
  * Altis\ReusableBlocks\Connections Bootstrap.
  */
 function bootstrap() {
-	add_action( 'init',                __NAMESPACE__ . '\\register_relationship_taxonomy' );
-	add_action( 'wp_insert_post',      __NAMESPACE__ . '\\maybe_create_shadow_term', 10, 2 );
-	add_action( 'before_delete_post',  __NAMESPACE__ . '\\delete_shadow_term' );
-	add_action( 'post_updated',        __NAMESPACE__ . '\\synchronize_associated_terms', 10, 3 );
+	add_action( 'init',                                __NAMESPACE__ . '\\register_relationship_taxonomy' );
+	add_action( 'wp_insert_post',                      __NAMESPACE__ . '\\maybe_create_shadow_term', 10, 2 );
+	add_action( 'before_delete_post',                  __NAMESPACE__ . '\\delete_shadow_term' );
+	add_action( 'post_updated',                        __NAMESPACE__ . '\\synchronize_associated_terms', 10, 3 );
+	add_action( 'manage_wp_block_posts_columns',       __NAMESPACE__ . '\\manage_wp_block_posts_columns' );
+	add_action( 'manage_wp_block_posts_custom_column', __NAMESPACE__ . '\\usage_column_output', 10, 2 );
 }
 
 /**
@@ -256,10 +260,78 @@ function synchronize_associated_terms( int $post_id, WP_Post $post_after, WP_Pos
 	foreach ( $reusable_blocks as $block ) {
 		$block_post_id = $block['ref'];
 		$shadow_term_ids[] = get_associated_term_id( $block_post_id );
+
+		// Delete usage count cache.
+		wp_cache_delete( sprintf( BLOCK_USAGE_COUNT_CACHE_KEY_FORMAT, $block_post_id ) );
 	}
 
 	// Set the post relationships to the shadow terms.
 	$terms_set = wp_set_object_terms( $post_id, $shadow_term_ids, RELATIONSHIP_TAXONOMY );
 
 	return ! is_wp_error( $terms_set );
+}
+
+/**
+ * Adds the usage count column to the `wp_block` post list table.
+ *
+ * @param array $columns - Columns to be filtered.
+ *
+ * @return array - Filtered columns.
+ */
+function manage_wp_block_posts_columns( $columns ) {
+	unset( $columns['date'] );
+	$columns['usage-count'] = __( 'Usage Count', 'altis-reusable-blocks' );
+	$columns['date'] = __( 'Date', 'altis-reusable-blocks' );
+
+	return $columns;
+}
+
+/**
+ * Renders the usage count for the post list table custom column.
+ *
+ * @param string $column - Custom column slug name.
+ * @param int $post_id - Post to display data for.
+ */
+function usage_column_output( $column, $post_id ) {
+	if ( $column !== 'usage-count' ) {
+		return;
+	}
+
+	$term_id = get_associated_term_id( $post_id );
+
+	// Return a blank array if no term_id is found.
+	if ( ! $term_id ) {
+		return [];
+	}
+
+	$cache_key = sprintf( BLOCK_USAGE_COUNT_CACHE_KEY_FORMAT, $post_id );
+
+	$count = wp_cache_get( $cache_key );
+
+	if ( $count === false ) {
+		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+		$query_args = [
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+			'post_type'      => get_post_types_with_reusable_blocks(),
+			'post_status'    => 'any',
+			'tax_query' => [
+				[
+					'taxonomy' => RELATIONSHIP_TAXONOMY,
+					'field' => 'term_id',
+					'terms' => $term_id,
+				]
+			]
+		];
+		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+
+		$query  = new WP_Query( $query_args );
+		$count = $query->post_count;
+
+		// Cache for 8 hours since we are busting the cache any time the usage gets changed.
+		wp_cache_set( $cache_key, $query->post_count, '', 8 * HOUR_IN_SECONDS );
+	}
+
+	printf( '<a href="%s">%d</a>', esc_url( get_edit_post_link( $post_id ) ), esc_html( $count ) );
 }
