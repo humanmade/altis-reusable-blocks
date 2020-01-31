@@ -14,6 +14,7 @@ The main goals of Altis Reusable Blocks are to:
 ## Table of Contents
 
 * [Features](#features)
+  * [Relationship and usage tracking](#relationship-and-usage-tracking)
   * [Admin Bar and Menu](#admin-bar-and-menu)
   * [Categories](#categories)
   * [Filtering](#filtering)
