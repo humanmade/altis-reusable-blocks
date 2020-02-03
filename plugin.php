@@ -12,9 +12,11 @@
 
 namespace Altis\ReusableBlocks;
 
-defined( 'ABSPATH' ) || die;
-
 const PLUGIN_FILE = __FILE__;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
 
 require_once __DIR__ . '/inc/namespace.php';
 require_once __DIR__ . '/inc/categories.php';

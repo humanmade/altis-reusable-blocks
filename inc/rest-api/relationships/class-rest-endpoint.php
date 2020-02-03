@@ -9,6 +9,7 @@ use Altis\ReusableBlocks\Connections;
 use Altis\ReusableBlocks;
 
 use WP_Error;
+use WP_Post;
 use WP_Query;
 use WP_REST_Posts_Controller;
 use WP_REST_Response;
@@ -45,7 +46,7 @@ class REST_Endpoint {
 	}
 
 	/**
-	 * Register homepage routes for WP API.
+	 * Register relationship routes for WP API.
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -53,7 +54,7 @@ class REST_Endpoint {
 			$this->rest_base,
 			[
 				[
-					'methods'  => WP_REST_Server::READABLE,
+					'methods'  => 'GET',
 					'callback' => [ $this, 'get_items' ],
 					'args'     => [
 						'context' => [
@@ -76,7 +77,7 @@ class REST_Endpoint {
 	 *
 	 * @return array $schema
 	 */
-	public function get_item_schema() {
+	public function get_item_schema() : array {
 		$schema = [
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
 			'title'      => __( 'Block relationships', 'altis-reusable-blocks' ),
@@ -198,7 +199,7 @@ class REST_Endpoint {
 
 		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		$query_args = [
-			'posts_per_page' => Altis\ReusableBlocks\RELATIONSHIPS_PER_PAGE,
+			'posts_per_page' => ReusableBlocks\RELATIONSHIPS_PER_PAGE,
 			'paged'          => $page ?? 1,
 			'post_type'      => Connections\get_post_types_with_reusable_blocks(),
 			'post_status'    => 'any',
@@ -220,7 +221,7 @@ class REST_Endpoint {
 			return [];
 		}
 
-		$max_pages = ceil( $total_posts / Altis\ReusableBlocks\RELATIONSHIPS_PER_PAGE );
+		$max_pages = ceil( $total_posts / ReusableBlocks\RELATIONSHIPS_PER_PAGE );
 
 		// Return error if requested invalid page number.
 		if ( $page > $max_pages && $total_posts > 0 ) {
@@ -258,14 +259,11 @@ class REST_Endpoint {
 
 		if ( $page > 1 ) {
 			$prev_page = $page - 1;
-
-			if ( $prev_page > $max_pages ) {
-				$prev_page = $max_pages;
-			}
-
 			$prev_link = add_query_arg( 'page', $prev_page, $base );
+
 			$response->link_header( 'prev', $prev_link );
 		}
+
 		if ( $max_pages > $page ) {
 			$next_page = $page + 1;
 			$next_link = add_query_arg( 'page', $next_page, $base );
@@ -279,13 +277,11 @@ class REST_Endpoint {
 	/**
 	 * Prepares a single post output for response.
 	 *
-	 * @since 4.7.0
-	 *
 	 * @param WP_Post         $post    Post object.
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response Response object.
 	 */
-	public function prepare_item_for_response( $post, $request ) {
+	public function prepare_item_for_response( WP_Post $post, WP_REST_Request $request ) : WP_REST_Response {
 		// Base fields for every post.
 		$data = [
 			'id' => $post->ID,
