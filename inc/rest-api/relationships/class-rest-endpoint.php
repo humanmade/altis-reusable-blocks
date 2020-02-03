@@ -277,8 +277,6 @@ class REST_Endpoint {
 	/**
 	 * Prepares a single post output for response.
 	 *
-	 * @since 4.7.0
-	 *
 	 * @param WP_Post         $post    Post object.
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response Response object.
