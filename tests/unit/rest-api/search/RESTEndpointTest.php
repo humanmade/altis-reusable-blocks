@@ -37,7 +37,7 @@ class RESTEndpointTest extends TestCase {
 							],
 						],
 					]
-				),
+				)
 			);
 
 		$testee->register_routes();

@@ -41,8 +41,8 @@ class RESTEndpointTest extends TestCase {
 							],
 						],
 						'schema' => [ $this->testee, 'get_item_schema' ],
-					],
-				),
+					]
+				)
 			);
 
 		$this->testee->register_routes();

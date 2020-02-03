@@ -91,7 +91,7 @@ class NamespaceTest extends TestCase {
 						'postType' => 'wp_block',
 					],
 					'relationshipsPerPage' => Testee\RELATIONSHIPS_PER_PAGE,
-				],
+				]
 			 )
 			->andReturn( true );
 
@@ -274,11 +274,13 @@ class NamespaceTest extends TestCase {
 	public function test_admin_menu() {
 		global $menu, $submenu, $_wp_last_object_menu;
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
 		$menu = [];
 
 		$submenu = [];
 
 		$_wp_last_object_menu = 19;
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		$post_type_obj = (object) [
 			'cap'          => (object) [
@@ -374,11 +376,13 @@ class NamespaceTest extends TestCase {
 	public function test_admin_menu_custom_icon() {
 		global $menu, $submenu, $_wp_last_object_menu;
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
 		$menu = [];
 
 		$submenu = [];
 
 		$_wp_last_object_menu = 19;
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		$post_type_obj = (object) [
 			'cap'          => (object) [
