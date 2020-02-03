@@ -50,7 +50,7 @@ class REST_Endpoint {
 			$this->namespace,
 			$this->rest_base,
 			[
-				'methods'  => WP_REST_Server::READABLE,
+				'methods'  => 'GET',
 				'callback' => [ $this, 'get_items' ],
 				'schema'   => ( new WP_REST_Blocks_Controller( 'wp_block' ) )->get_item_schema(),
 				'args'     => [

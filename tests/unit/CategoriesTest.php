@@ -23,6 +23,8 @@ class CategoriesTest extends TestCase {
 	}
 
 	public function test_register_block_categories() {
+		Functions\stubTranslationFunctions();
+
 		Functions\expect( 'register_taxonomy' )
 			->with( 'wp_block_category', 'wp_block', [
 				'label' => 'Block Categories',
@@ -54,5 +56,7 @@ class CategoriesTest extends TestCase {
 				'rewrite' => false,
 			] )
 			->andReturn( true );
+
+		Testee\register_block_categories();
 	}
 }

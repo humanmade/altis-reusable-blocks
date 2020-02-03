@@ -25,6 +25,7 @@
             "Altis\\ReusableBlocks\\REST_API\\Search\\": "rest-api/search/"
         },
         "files": [
+            "plugin.php",
             "inc/namespace.php",
             "inc/categories.php",
             "inc/connections.php",

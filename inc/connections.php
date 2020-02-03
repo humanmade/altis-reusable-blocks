@@ -24,7 +24,7 @@ function bootstrap() {
 	add_action( 'wp_insert_post',                      __NAMESPACE__ . '\\maybe_create_shadow_term', 10, 2 );
 	add_action( 'before_delete_post',                  __NAMESPACE__ . '\\delete_shadow_term' );
 	add_action( 'post_updated',                        __NAMESPACE__ . '\\synchronize_associated_terms', 10, 3 );
-	add_action( 'manage_wp_block_posts_columns',       __NAMESPACE__ . '\\manage_wp_block_posts_columns' );
+	add_filter( 'manage_wp_block_posts_columns',       __NAMESPACE__ . '\\manage_wp_block_posts_columns' );
 	add_action( 'manage_wp_block_posts_custom_column', __NAMESPACE__ . '\\usage_column_output', 10, 2 );
 }
 
@@ -278,7 +278,7 @@ function synchronize_associated_terms( int $post_id, WP_Post $post_after, WP_Pos
  *
  * @return array - Filtered columns.
  */
-function manage_wp_block_posts_columns( $columns ) {
+function manage_wp_block_posts_columns( array $columns ) : array {
 	unset( $columns['date'] );
 	$columns['usage-count'] = __( 'Usage Count', 'altis-reusable-blocks' );
 	$columns['date'] = __( 'Date', 'altis-reusable-blocks' );
@@ -301,7 +301,7 @@ function usage_column_output( $column, $post_id ) {
 
 	// Return a blank array if no term_id is found.
 	if ( ! $term_id ) {
-		return [];
+		return;
 	}
 
 	$cache_key = sprintf( BLOCK_USAGE_COUNT_CACHE_KEY_FORMAT, $post_id );
@@ -326,11 +326,12 @@ function usage_column_output( $column, $post_id ) {
 		];
 		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 
-		$query  = new WP_Query( $query_args );
+		$query  = new WP_Query();
+		$query_results = $query->query( $query_args );
 		$count = $query->post_count;
 
 		// Cache for 8 hours since we are busting the cache any time the usage gets changed.
-		wp_cache_set( $cache_key, $query->post_count, '', 8 * HOUR_IN_SECONDS );
+		wp_cache_set( $cache_key, $count, '', 8 * 60 * 60 );
 	}
 
 	printf( '<a href="%s">%d</a>', esc_url( get_edit_post_link( $post_id ) ), esc_html( $count ) );

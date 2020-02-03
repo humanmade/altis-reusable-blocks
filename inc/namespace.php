@@ -115,7 +115,7 @@ function insert_reusable_block_post_data( array $data, array $postarr ) : array 
  * @param string $post_type The post type name.
  * @return array
  */
-function show_wp_block_in_menu( array $args, string $post_type ) {
+function show_wp_block_in_menu( array $args, string $post_type ) : array {
 	if ( $post_type !== 'wp_block' ) {
 		return $args;
 	}
@@ -145,7 +145,7 @@ function admin_menu() {
 
 	// Check if it should be a submenu.
 	if ( $ptype_obj->show_in_menu !== true ) {
-		return;
+		return false;
 	}
 
 	$ptype_menu_position = is_int( $ptype_obj->menu_position ) ? $ptype_obj->menu_position : ++$_wp_last_object_menu; // If we're to use $_wp_last_object_menu, increment it first.

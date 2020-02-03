@@ -30,6 +30,12 @@ class ConnectionsTest extends TestCase {
 		Actions\expectAdded( 'post_updated' )
 			->with( 'Altis\ReusableBlocks\Connections\synchronize_associated_terms', 10, 3 );
 
+		Filters\expectAdded( 'manage_wp_block_posts_columns' )
+			->with( 'Altis\ReusableBlocks\Connections\manage_wp_block_posts_columns' );
+
+		Actions\expectAdded( 'manage_wp_block_posts_custom_column' )
+			->with( 'Altis\ReusableBlocks\Connections\usage_column_output', 10, 2 );
+
 		Testee\bootstrap();
 	}
 
@@ -564,5 +570,101 @@ class ConnectionsTest extends TestCase {
 			->andReturn( [ 'term_id' => 1, 'taxonomy_term_id' => 1 ] );
 
 		$this->assertTrue( Testee\synchronize_associated_terms( $post_id, $post_before, $post_after ) );
+	}
+
+	public function test_manage_wp_block_posts_columns() {
+		Functions\stubTranslationFunctions();
+
+		$original_columns = [
+			'title' => 'Title',
+			'date'  => 'Date'
+		];
+
+		$expected_columns = [
+			'title'       => 'Title',
+			'usage-count' => 'Usage Count',
+			'date'        => 'Date',
+		];
+
+		$this->assertSame( $expected_columns, Testee\manage_wp_block_posts_columns( $original_columns ) );
+	}
+
+	public function test_usage_column_output_wrong_column() {
+		ob_start();
+		Testee\usage_column_output( 'date', 1 );
+		$output = ob_get_clean();
+
+		$this->assertSame( '', $output );
+	}
+
+
+	public function test_usage_column_output_cached_results() {
+		Functions\stubEscapeFunctions();
+
+		Functions\expect( 'get_post_meta' )
+			->with( 1, 'shadow_term_id', true )
+			->andReturn( 1 );
+
+		Functions\expect( 'wp_cache_get' )
+			->with( sprintf( Testee\BLOCK_USAGE_COUNT_CACHE_KEY_FORMAT, 1 ) )
+			->andReturn( 42 );
+
+		Functions\expect( 'get_edit_post_link' )
+			->with( 1 )
+			->andReturn( 'http://altis.local/wp-admin/post.php?post=1&action=edit' );
+
+		$expected_output = '<a href="http://altis.local/wp-admin/post.php?post=1&action=edit">42</a>';
+
+		ob_start();
+		Testee\usage_column_output( 'usage-count', 1 );
+		$output = ob_get_clean();
+
+		$this->assertSame( $expected_output, $output );
+	}
+
+	public function test_usage_column_output_noncached_results() {
+		Functions\stubEscapeFunctions();
+
+		Functions\expect( 'get_post_meta' )
+			->with( 1, 'shadow_term_id', true )
+			->andReturn( 1 );
+
+		Functions\expect( 'wp_cache_get' )
+			->with( sprintf( Testee\BLOCK_USAGE_COUNT_CACHE_KEY_FORMAT, 1 ) )
+			->andReturn( false );
+
+		$query = \Mockery::mock( 'overload:' . \WP_Query::class )
+			->shouldReceive( 'query' )
+			->andSet( 'post_count', 42 )
+			->once()
+			->andReturn( [] );
+
+		Functions\expect( 'wp_cache_set' )
+			->with( sprintf( Testee\BLOCK_USAGE_COUNT_CACHE_KEY_FORMAT, 1 ), '', 42, 8 * 60 * 60 )
+			->andReturn( true );
+
+		Functions\expect( 'get_edit_post_link' )
+			->with( 1 )
+			->andReturn( 'http://altis.local/wp-admin/post.php?post=1&action=edit' );
+
+		$expected_output = '<a href="http://altis.local/wp-admin/post.php?post=1&action=edit">42</a>';
+
+		ob_start();
+		Testee\usage_column_output( 'usage-count', 1 );
+		$output = ob_get_clean();
+
+		$this->assertSame( $expected_output, $output );
+	}
+
+	public function test_usage_column_output_no_associated_term() {
+		Functions\expect( 'get_post_meta' )
+			->with( 1, 'shadow_term_id', true )
+			->andReturn( false );
+
+		ob_start();
+		Testee\usage_column_output( 'usage-count', 1 );
+		$output = ob_get_clean();
+
+		$this->assertSame( '', $output );
 	}
 }

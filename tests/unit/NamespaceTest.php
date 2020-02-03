@@ -25,13 +25,77 @@ class NamespaceTest extends TestCase {
 		Actions\expectAdded( 'admin_bar_menu' )
 			->with( 'Altis\ReusableBlocks\add_block_admin_bar_menu_items', 100 );
 
+		Actions\expectAdded( 'admin_menu' )
+			->with( 'Altis\ReusableBlocks\admin_menu', 9 );
+
 		Filters\expectAdded( 'wp_insert_post_data' )
-		 	->with( 'Altis\ReusableBlocks\insert_reusable_block_post_data', 10, 2 );
+			->with( 'Altis\ReusableBlocks\insert_reusable_block_post_data', 10, 2 );
+
+		Filters\expectAdded( 'register_post_type_args' )
+			->with( 'Altis\ReusableBlocks\show_wp_block_in_menu', 10, 2 );
 
 		Filters\expectAdded( 'allowed_block_types' )
-			 ->with( 'Altis\ReusableBlocks\filter_allowed_block_types', 20 );
+			->with( 'Altis\ReusableBlocks\filter_allowed_block_types', 20 );
 
 		Testee\bootstrap();
+	}
+
+	public function test_enqueue_block_editor_assets() {
+		Functions\expect( 'plugin_dir_path' )
+			->with(
+				Testee\PLUGIN_FILE
+			)
+			->andReturn( 'filepath/' );
+
+		Functions\expect( 'Asset_Loader\autoenqueue' )
+			->with(
+				'filepath/build/asset-manifest.json',
+				'index.js',
+				[
+					'handle'  => 'altis-reusable-blocks',
+					'scripts' => [
+						'wp-api-fetch',
+						'wp-blocks',
+						'wp-components',
+						'wp-compose',
+						'wp-data',
+						'wp-edit-post',
+						'wp-editor',
+						'wp-element',
+						'wp-html-entities',
+						'wp-i18n',
+						'wp-plugins',
+						'wp-url',
+					]
+				]
+			);
+
+		Functions\expect( 'admin_url' )
+			->with( 'post.php?post=%d&action=edit' )
+			->andReturn( 'http://altis.local/wp-admin/post.php?post=%d&action=edit' );
+
+		Functions\expect( 'get_the_ID' )
+			->andReturn( 1 );
+
+		Functions\expect( 'get_post_type' )
+			->andReturn( 'wp_block' );
+
+		Functions\expect( 'wp_localize_script' )
+			->with(
+				'altis-reusable-blocks',
+				'altisReusableBlocksSettings',
+				[
+					'editPostUrl' => 'http://altis.local/wp-admin/post.php?post=%d&action=edit',
+					'context' => [
+						'postId'   => 1,
+						'postType' => 'wp_block',
+					],
+					'relationshipsPerPage' => Testee\RELATIONSHIPS_PER_PAGE,
+				],
+			 )
+			->andReturn( true );
+
+		Testee\enqueue_block_editor_assets();
 	}
 
 	/**
@@ -116,6 +180,11 @@ class NamespaceTest extends TestCase {
 		$this->assertSame( $post_name, $new_data['post_name'] );
 	}
 
+	/**
+	 * Tests `add_block_admin_bar_menu_item`.
+	 *
+	 * @return void
+	 */
 	public function test_add_block_admin_bar_menu_items() {
 		Functions\stubTranslationFunctions();
 
@@ -138,4 +207,263 @@ class NamespaceTest extends TestCase {
 
 		Testee\add_block_admin_bar_menu_items( $admin_bar );
 	}
+
+	/**
+	 * Test `show_wp_block_in_menu` if invalid post type is being filtered.
+	 *
+	 * @return void
+	 */
+	public function test_show_wp_block_in_menu_invalid_post_type() {
+		$this->assertSame( [], Testee\show_wp_block_in_menu( [], 'post' ) );
+	}
+
+	/**
+	 * Test `show_wp_block_in_menu` if correct args are returned.
+	 *
+	 * @return void
+	 */
+	public function test_show_wp_block_in_menu() {
+		$args = [];
+		$expected_args = [
+			'show_in_menu' => true,
+			'menu_position' => 24,
+			'menu_icon' => 'dashicons-screenoptions',
+		];
+
+		$this->assertSame( $expected_args, Testee\show_wp_block_in_menu( $args, 'wp_block' ) );
+	}
+
+	/**
+	 * Test `show_wp_block_in_menu` if user has no capability to manage Blocks.
+	 *
+	 * @return void
+	 */
+	public function test_show_wp_block_in_menu_no_caps() {
+		Functions\expect( 'wp_get_current_user' )
+			->never();
+
+		Functions\expect( 'current_user_can' )
+			->with( 'edit_posts' )
+			->andReturn( false );
+
+		$this->assertSame( [], Testee\show_wp_block_in_menu( [], 'wp_block' ) );
+	}
+
+	/**
+	 * Tests `admin_menu` if `show_in_menu` was filtered to be false.
+	 *
+	 * @return void
+	 */
+	public function test_admin_menu_show_in_menu_false() {
+		$post_type_obj = (object) [
+			'show_in_menu' => false,
+		];
+
+		Functions\expect( 'get_post_type_object' )
+			->with( 'wp_block' )
+			->andReturn( $post_type_obj );
+
+		$this->assertFalse( Testee\admin_menu() );
+	}
+
+	/**
+	 * Tests `admin_menu` additions with Blocks menu.
+	 *
+	 * @return void
+	 */
+	public function test_admin_menu() {
+		global $menu, $submenu, $_wp_last_object_menu;
+
+		$menu = [];
+
+		$submenu = [];
+
+		$_wp_last_object_menu = 19;
+
+		$post_type_obj = (object) [
+			'cap'          => (object) [
+				'edit_posts'   => 'edit_wp_block',
+				'create_posts' => 'create_wp_block',
+			],
+			'labels'       => (object) [
+				'menu_name'    => 'Blocks',
+				'add_new'      => 'Add New Block',
+				'all_items'    => 'All Blocks',
+			],
+			'show_in_menu' => true,
+			'menu_position' => 20,
+			'menu_icon' => 'dashicons-fake-icon',
+		];
+
+		$fake_taxonomy_obj = (object) [ 'show_ui' => false ];
+
+		$cat_taxonomy_obj = (object) [
+			'cap'          => (object) [
+				'manage_terms' => 'manage_category',
+			],
+			'labels'       => (object) [
+				'menu_name'    => 'Categories',
+			],
+			'name'         => 'category',
+			'object_type'  => [ 'post', 'wp_block' ],
+			'show_ui'      => true,
+			'show_in_menu' => true,
+		];
+
+		Functions\stubEscapeFunctions();
+
+		Functions\expect( 'get_post_type_object' )
+			->with( 'wp_block' )
+			->andReturn( $post_type_obj );
+
+		Functions\expect( 'sanitize_html_class' )
+			->with( 'wp_block' )
+			->andReturn( 'wp_block' );
+
+		Functions\expect( 'get_taxonomies' )
+			->with( [], 'objects' )
+			->andReturn( [
+				$cat_taxonomy_obj,
+				$fake_taxonomy_obj,
+			] );
+
+
+		Testee\admin_menu();
+
+		$expected_menu = [
+			20 => [
+				'Blocks',
+				'edit_wp_block',
+				'edit.php?post_type=wp_block',
+				'',
+				'menu-top menu-icon-wp_block',
+				'menu-posts-wp_block',
+				'dashicons-fake-icon',
+			]
+		];
+
+		$expected_submenu = [
+			'edit.php?post_type=wp_block' => [
+				5 => [
+					0 => 'All Blocks',
+					1 => 'edit_wp_block',
+					2 => 'edit.php?post_type=wp_block',
+				],
+				10 => [
+					0 => 'Add New Block',
+					1 => 'create_wp_block',
+					2 => 'post-new.php?post_type=wp_block',
+				],
+				15 => [
+					0 => 'Categories',
+					1 => 'manage_category',
+					2 => 'edit-tags.php?taxonomy=category&amp;post_type=wp_block',
+				],
+			],
+		];
+
+		$this->assertSame( $expected_menu, $menu );
+		$this->assertSame( $expected_submenu, $submenu );
+	}
+
+	/**
+	 * Tests `admin_menu` additions with Blocks menu.
+	 *
+	 * @return void
+	 */
+	public function test_admin_menu_custom_icon() {
+		global $menu, $submenu, $_wp_last_object_menu;
+
+		$menu = [];
+
+		$submenu = [];
+
+		$_wp_last_object_menu = 19;
+
+		$post_type_obj = (object) [
+			'cap'          => (object) [
+				'edit_posts'   => 'edit_wp_block',
+				'create_posts' => 'create_wp_block',
+			],
+			'labels'       => (object) [
+				'menu_name'    => 'Blocks',
+				'add_new'      => 'Add New Block',
+				'all_items'    => 'All Blocks',
+			],
+			'show_in_menu' => true,
+			'menu_position' => 59,
+			'menu_icon' => 'https://altis.local/icon.png',
+		];
+
+		$fake_taxonomy_obj = (object) [ 'show_ui' => false ];
+
+		$cat_taxonomy_obj = (object) [
+			'cap'          => (object) [
+				'manage_terms' => 'manage_category',
+			],
+			'labels'       => (object) [
+				'menu_name'    => 'Categories',
+			],
+			'name'         => 'category',
+			'object_type'  => [ 'post', 'wp_block' ],
+			'show_ui'      => true,
+			'show_in_menu' => true,
+		];
+
+		Functions\stubEscapeFunctions();
+
+		Functions\expect( 'get_post_type_object' )
+			->with( 'wp_block' )
+			->andReturn( $post_type_obj );
+
+		Functions\expect( 'sanitize_html_class' )
+			->with( 'wp_block' )
+			->andReturn( 'wp_block' );
+
+		Functions\expect( 'get_taxonomies' )
+			->with( [], 'objects' )
+			->andReturn( [
+				$cat_taxonomy_obj,
+				$fake_taxonomy_obj,
+			] );
+
+
+		Testee\admin_menu();
+
+		$expected_menu = [
+			61 => [
+				'Blocks',
+				'edit_wp_block',
+				'edit.php?post_type=wp_block',
+				'',
+				'menu-top menu-icon-wp_block',
+				'menu-posts-wp_block',
+				'https://altis.local/icon.png',
+			]
+		];
+
+		$expected_submenu = [
+			'edit.php?post_type=wp_block' => [
+				5 => [
+					0 => 'All Blocks',
+					1 => 'edit_wp_block',
+					2 => 'edit.php?post_type=wp_block',
+				],
+				10 => [
+					0 => 'Add New Block',
+					1 => 'create_wp_block',
+					2 => 'post-new.php?post_type=wp_block',
+				],
+				15 => [
+					0 => 'Categories',
+					1 => 'manage_category',
+					2 => 'edit-tags.php?taxonomy=category&amp;post_type=wp_block',
+				],
+			],
+		];
+
+		$this->assertSame( $expected_menu, $menu );
+		$this->assertSame( $expected_submenu, $submenu );
+	}
+
 }
