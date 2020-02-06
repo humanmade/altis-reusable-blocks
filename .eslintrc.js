@@ -3,6 +3,8 @@
  * as well as copy-and-paste from and to other .eslintrc JSON files.
  */
 
+const jest = require( 'eslint-plugin-jest' );
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
@@ -82,5 +84,26 @@ module.exports = {
 
 		// There is an issue with references not being detected when used as JSX component name (e.g., App in <App />).
 		"@wordpress/no-unused-vars-before-return": "off",
-	}
+	},
+	"overrides": [
+		{
+			"files": [
+				"**/*.test.js",
+				"**/__mocks__/**/*.js"
+			],
+			...jest.configs.recommended,
+			"env": {
+				"jest": true
+			},
+			"globals": {
+				"mockComponent": "readonly",
+				"mockComponents": "readonly",
+			},
+			"rules": {
+				...jest.configs.recommended.rules,
+				"padded-blocks": "off",
+				"react/prop-types": "off"
+			}
+		}
+	]
 };
