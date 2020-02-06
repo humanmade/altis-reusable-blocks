@@ -48,7 +48,8 @@
     "lint": "concurrently \"npm run lint:php\" \"npm run lint:js\"",
     "lint:js": "eslint ./src",
     "lint:php": "./vendor/bin/phpcs --standard=phpcs.xml.dist",
-    "test:unit": "wp-scripts test-unit-js"
+    "lint:style": "stylelint --config .stylelintrc --ignore-path .stylelintignore '**/*.{css,scss}'",
+    "test:unit": "jest"
   },
   "browserslist": [
     "> 2%",

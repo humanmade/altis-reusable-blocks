@@ -68,33 +68,41 @@ jobs:
         key: node_modules-${{ hashFiles('yarn.lock') }}
 
     # Syntax check the PHP using 8 parallel threads
-    - name: PHP Syntax Linting
+    - name: Lint PHP
       run: find . -path ./vendor -prune -o -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
 
-    - name: Run yarn install
-      run: |
-        yarn install
-
-    - name: Run composer validate
+    - name: Validate Composer Config File
       run: |
         composer validate
 
-    - name: Run composer install
+    - name: Install PHP Dependencies
       run: |
         composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Run PHPUnit
+    - name: Run PHP Coding Standards
+      run: |
+        composer lint:phpcs
+
+    - name: Run PHP Unit Tests
       run: |
         composer test:unit
 
-    - name: Run PHPCS Coding Standards
+    - name: Install JavaScript Dependencies
       run: |
-        composer run lint:phpcs
+        yarn
 
-    - name: Run ESLint
+    - name: Lint JavaScript
       run: |
         yarn lint:js
 
-    - name: Run yarn build
+    - name: Run JavaScript Unit Tests
       run: |
-        yarn run build
+        yarn test:unit
+
+    - name: Lint Styles
+      run: |
+        yarn lint:style
+
+    - name: Build project
+      run: |
+        yarn build
