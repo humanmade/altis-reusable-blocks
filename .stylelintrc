@@ -1,0 +1,11 @@
+{
+    "extends": "stylelint-config-standard",
+    "rules": {
+        "function-comma-space-after": "always-single-line",
+        "indentation": "tab",
+        "max-empty-lines": 1,
+        "media-feature-parentheses-space-inside": "always",
+        "no-descending-specificity": null,
+        "no-duplicate-selectors": null
+    }
+}

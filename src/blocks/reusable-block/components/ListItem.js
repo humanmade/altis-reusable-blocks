@@ -1,21 +1,7 @@
 import PropTypes from 'prop-types';
 
-import { BlockIcon } from '@wordpress/block-editor';
 import { Button } from '@wordpress/components';
-
-const icon = (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="24"
-		height="24"
-		aria-hidden="true"
-		viewBox="0 0 24 24"
-	>
-		<path fill="none" d="M0 0H24V24H0z"></path>
-		<path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM6
-		6h5v5H6V6zm4.5 13a2.5 2.5 0 010-5 2.5 2.5 0 010 5zm3-6l3-5 3 5h-6z"></path>
-	</svg>
-);
+import Icon from './Icon';
 
 const ListItem = ( { id, onClick, onHover, title, ...props } ) => (
 	<li className="block-editor-block-types-list__list-item">
@@ -32,7 +18,7 @@ const ListItem = ( { id, onClick, onHover, title, ...props } ) => (
 			{ ...props }
 		>
 			<span className="block-editor-block-types-list__item-icon">
-				<BlockIcon icon={ icon } showColors />
+				<Icon />
 			</span>
 			<span className="block-editor-block-types-list__item-title">
 				{ title }

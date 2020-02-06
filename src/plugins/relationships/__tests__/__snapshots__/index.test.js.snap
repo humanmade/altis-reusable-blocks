@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`settings are as expected 1`] = `
+Object {
+  "icon": "admin-links",
+  "render": [Function],
+}
+`;

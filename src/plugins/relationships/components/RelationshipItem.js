@@ -1,32 +1,34 @@
 import PropTypes from 'prop-types';
 
 import { PanelRow } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
-import settings from '../../../settings';
+import { getEditPostUrl } from '../../../utils/post';
 
-const { editPostUrl } = settings;
-
-const RelationshipItem = ( { id, status, title } ) => {
-	const itemTitle = title.rendered || __( '(No Title)', 'altis-reusable-blocks' );
-
-	return (
-		<PanelRow key={ id }>
-			<a target="_blank" rel="noopener noreferrer" href={ sprintf( editPostUrl, id ) }>
-				{ `#${ id } - ${ itemTitle }` }
-			</a>
-			{ status === 'draft' && __( '(Draft)', 'altis-reusable-blocks' ) }
-			{ status === 'pending' && __( '(Pending)', 'altis-reusable-blocks' ) }
-		</PanelRow>
-	);
+const statusMap = {
+	draft: __( '(Draft)', 'newspress' ),
+	pending: __( '(Pending)', 'newspress' ),
 };
+
+const RelationshipItem = ( { id, status, title } ) => (
+	<PanelRow>
+		<a target="_blank" rel="noopener noreferrer" href={ getEditPostUrl( id ) }>
+			{ `#${ id } - ${ ( title.rendered || __( '(No Title)', 'altis-reusable-blocks' ) ) }` }
+		</a>
+		{ statusMap[ status ] || null }
+	</PanelRow>
+);
 
 RelationshipItem.propTypes = {
 	id: PropTypes.number.isRequired,
 	status: PropTypes.string.isRequired,
 	title: PropTypes.shape( {
-		rendered: PropTypes.string.isRequired,
+		rendered: PropTypes.string,
 	} ),
+};
+
+RelationshipItem.defaultProps = {
+	title: {},
 };
 
 export default RelationshipItem;

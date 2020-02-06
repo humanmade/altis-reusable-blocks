@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<List /> renders as expected 1`] = `
+<div
+  className="block-editor-reusable-blocks-inserter__list"
+>
+  <ul
+    className="block-editor-block-types-list reusable-block-types-list"
+  >
+    <ListItem
+      id={23}
+      key="23"
+      onClick={[Function]}
+      onHover={[Function]}
+    />
+    <ListItem
+      id={42}
+      key="42"
+      onClick={[Function]}
+      onHover={[Function]}
+    />
+  </ul>
+</div>
+`;
+
+exports[`<List /> renders as expected if fetching 1`] = `
+<div
+  className="block-editor-reusable-blocks-inserter__list"
+>
+  <Placeholder>
+    <Spinner />
+  </Placeholder>
+</div>
+`;
+
+exports[`<List /> renders as expected if no items 1`] = `
+<div
+  className="block-editor-reusable-blocks-inserter__list"
+>
+  <ul
+    className="block-editor-block-types-list reusable-block-types-list"
+  />
+</div>
+`;

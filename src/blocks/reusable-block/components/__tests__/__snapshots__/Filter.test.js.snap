@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Filter /> renders as expected if no categories 1`] = `
+<div
+  className="block-editor-reusable-blocks-inserter__filter"
+>
+  <TextControl
+    className="block-editor-reusable-blocks-inserter__filter-search-keyword"
+    label="Search: "
+    onChange={[Function]}
+    placeholder="Search by keywords, post ID, or block ID..."
+  />
+  <SelectControl
+    className="block-editor-reusable-blocks-inserter__filter-search-category"
+    disabled={42}
+    label="Category: "
+    onChange={[Function]}
+    options={Array []}
+  />
+</div>
+`;
+
+exports[`<Filter /> renders as expected with categories 1`] = `
+<div
+  className="block-editor-reusable-blocks-inserter__filter"
+>
+  <TextControl
+    className="block-editor-reusable-blocks-inserter__filter-search-keyword"
+    label="Search: "
+    onChange={[Function]}
+    placeholder="Search by keywords, post ID, or block ID..."
+  />
+  <SelectControl
+    className="block-editor-reusable-blocks-inserter__filter-search-category"
+    label="Category: "
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "label": "-- Select Category --",
+          "value": "",
+        },
+        Object {
+          "label": "First",
+          "value": 1,
+        },
+        Object {
+          "label": "Second",
+          "value": 2,
+        },
+        Object {
+          "label": "Third",
+          "value": 3,
+        },
+      ]
+    }
+  />
+</div>
+`;

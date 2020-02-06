@@ -21,13 +21,13 @@ import RelationshipItem from './RelationshipItem';
 const { relationshipsPerPage } = settings;
 
 const baseClassName = 'altis-reusable-block-relationships';
-const sidebarName = 'altis-reusable-block-relationships';
+const sidebarName = 'relationships';
 
 class Relationships extends Component {
 	state = {
-		relationshipsList: [],
 		currentPage: 1,
 		isFetching: false,
+		relationshipsList: [],
 		totalPages: 0,
 		totalItems: 0,
 	};
@@ -42,7 +42,7 @@ class Relationships extends Component {
 	/**
 	 * Fetch all the posts that use the current block.
 	 *
-	 * @param {Number} page - Page number for the request.
+	 * @param {Number} [page=1] - Page number for the request.
 	 */
 	fetchRelationships = async ( page = 1 ) => {
 		const { currentPostId } = this.props;
@@ -53,7 +53,7 @@ class Relationships extends Component {
 			const data = await fetchJson(
 				{
 					path: addQueryArgs(
-						`/altis-reusable-blocks/v1/relationships`, {
+						'/altis-reusable-blocks/v1/relationships', {
 							block_id: currentPostId,
 							page,
 						}
@@ -84,13 +84,13 @@ class Relationships extends Component {
 		const { relationshipsList } = this.state;
 
 		if ( ! newRelationshipsList.every( ( item ) => relationshipsList.includes( item ) ) ) {
-			const totalPages = parseInt( headers[ 'x-wp-totalpages' ], 10 );
 			const totalItems = parseInt( headers[ 'x-wp-total' ], 10 );
+			const totalPages = parseInt( headers[ 'x-wp-totalpages' ], 10 );
 
 			this.setState( {
 				relationshipsList: _uniqBy( [ ...relationshipsList, ...newRelationshipsList ], 'id' ),
-				totalPages,
 				totalItems,
+				totalPages,
 			} );
 		}
 	};
@@ -134,8 +134,8 @@ class Relationships extends Component {
 			currentPage,
 			isFetching,
 			relationshipsList,
-			totalPages,
 			totalItems,
+			totalPages,
 		} = this.state;
 
 		const title = __( 'Relationships', 'altis-reusable-blocks' );
@@ -144,10 +144,12 @@ class Relationships extends Component {
 
 		const items = relationshipsList.slice( startIndex, relationshipsPerPage * currentPage );
 		const relationshipItems = items.length
-			? items.map( ( relationshipItem ) => {
-				return ( <RelationshipItem { ...relationshipItem } key={ relationshipItem.id } /> );
-			} )
-			: <PanelRow>{ __( 'No Relationships to Display', 'altis-reusable-blocks' ) }</PanelRow>;
+			? items.map( ( relationshipItem ) => (
+				<RelationshipItem { ...relationshipItem } key={ relationshipItem.id } />
+			) )
+			: (
+				<PanelRow>{ __( 'No Relationships to Display', 'altis-reusable-blocks' ) }</PanelRow>
+			);
 
 		return (
 			<Fragment>
@@ -159,17 +161,17 @@ class Relationships extends Component {
 					title={ title }
 				>
 					<PanelBody className={ `${ baseClassName }__relationships_list` }>
-						{
-							isFetching
-								? <Placeholder><Spinner /></Placeholder>
-								: relationshipItems
-						}
+						{ isFetching ? (
+							<Placeholder><Spinner /></Placeholder>
+						) : (
+							relationshipItems
+						) }
 						<Pagination
 							currentPage={ currentPage }
-							goToPrevPage={ this.goToPrevPage }
 							goToNextPage={ this.goToNextPage }
-							totalPages={ totalPages }
+							goToPrevPage={ this.goToPrevPage }
 							totalItems={ totalItems }
+							totalPages={ totalPages }
 						/>
 					</PanelBody>
 				</PluginSidebar>

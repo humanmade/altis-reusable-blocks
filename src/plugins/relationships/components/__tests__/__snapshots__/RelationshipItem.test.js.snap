@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<RelationshipItem/> renders draft post with empty title as expected 1`] = `
+<PanelRow>
+  <a
+    href="https://example.com/edit/42"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    #42 - (No Title)
+  </a>
+  (Draft)
+</PanelRow>
+`;
+
+exports[`<RelationshipItem/> renders pending post as expected 1`] = `
+<PanelRow>
+  <a
+    href="https://example.com/edit/42"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    #42 - Pending Post
+  </a>
+  (Pending)
+</PanelRow>
+`;
+
+exports[`<RelationshipItem/> renders post with custom post status and missing title as expected 1`] = `
+<PanelRow>
+  <a
+    href="https://example.com/edit/42"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    #42 - (No Title)
+  </a>
+</PanelRow>
+`;
+
+exports[`<RelationshipItem/> renders published post as expected 1`] = `
+<PanelRow>
+  <a
+    href="https://example.com/edit/42"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    #42 - Published Post
+  </a>
+</PanelRow>
+`;

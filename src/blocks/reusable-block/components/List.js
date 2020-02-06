@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 
-import {
-	Placeholder,
-	Spinner,
-} from '@wordpress/components';
+import { Placeholder, Spinner } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 
 import ListItem from './ListItem';
@@ -67,15 +64,17 @@ class List extends Component {
 				 * search term within the title and content and weigh those more heavily.
 				 */
 				if ( searchKeywords.length > 2 ) {
+					const search = searchKeywords.join( ' ' );
+
 					const [
 						titleXMatches,
 						contentXMatches,
-					] = this.getMatchCounts( searchKeywords.join( ' ' ), blockX );
+					] = this.getMatchCounts( search, blockX );
 
 					const [
 						titleYMatches,
 						contentYMatches,
-					] = this.getMatchCounts( searchKeywords.join( ' ' ), blockY );
+					] = this.getMatchCounts( search, blockY );
 
 					const titleXScore = titleXMatches * TITLE_EXACT_MATCH_WEIGHT;
 					const contentXScore = contentXMatches * CONTENT_EXACT_MATCH_WEIGHT;
@@ -128,30 +127,26 @@ class List extends Component {
 			onItemSelect,
 		} = this.props;
 
-		const {
-			sortedBlocks,
-		} = this.state;
+		const { sortedBlocks } = this.state;
 
 		return (
 			<div className="block-editor-reusable-blocks-inserter__list">
-				{
-					isFetching
-						? ( <Placeholder><Spinner /></Placeholder> )
-						: (
-							<ul className="block-editor-block-types-list reusable-block-types-list">
-								{
-									sortedBlocks.map( ( block ) => (
-										<ListItem
-											key={ block.id }
-											onClick={ () => onItemSelect( block.id ) }
-											onHover={ onHover }
-											{ ...block }
-										/>
-									) )
-								}
-							</ul>
-						)
-				}
+				{ isFetching ? (
+					<Placeholder><Spinner /></Placeholder>
+				) : (
+					<ul className="block-editor-block-types-list reusable-block-types-list">
+						{
+							sortedBlocks.map( ( block ) => (
+								<ListItem
+									key={ block.id }
+									onClick={ () => onItemSelect( block.id ) }
+									onHover={ onHover }
+									{ ...block }
+								/>
+							) )
+						}
+					</ul>
+				) }
 			</div>
 		);
 	}
@@ -159,11 +154,16 @@ class List extends Component {
 
 List.propTypes = {
 	filteredBlocksList: PropTypes.array.isRequired,
-	isFetching: PropTypes.bool.isRequired,
-	onItemSelect: PropTypes.func.isRequired,
+	isFetching: PropTypes.bool,
 	onHover: PropTypes.func.isRequired,
+	onItemSelect: PropTypes.func.isRequired,
 	searchID: PropTypes.number,
 	searchKeywords: PropTypes.array.isRequired,
+};
+
+List.defaultProps = {
+	isFetching: false,
+	searchID: 0,
 };
 
 export default List;

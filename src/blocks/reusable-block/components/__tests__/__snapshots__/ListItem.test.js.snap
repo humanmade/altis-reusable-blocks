@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ListItem /> renders as expected 1`] = `
+<li
+  className="block-editor-block-types-list__list-item"
+>
+  <ForwardRef(Button)
+    className="block-editor-block-types-list__item"
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+  >
+    <span
+      className="block-editor-block-types-list__item-icon"
+    >
+      <Icon />
+    </span>
+    <span
+      className="block-editor-block-types-list__item-title"
+    >
+      Title
+    </span>
+  </ForwardRef(Button)>
+</li>
+`;

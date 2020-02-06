@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 
-import {
-	SelectControl,
-	TextControl,
-} from '@wordpress/components';
+import { SelectControl, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 const Filter = ( {

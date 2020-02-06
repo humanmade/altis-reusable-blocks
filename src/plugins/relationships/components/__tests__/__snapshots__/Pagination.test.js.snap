@@ -1,0 +1,182 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Pagination /> renders as expected if current page is first page 1`] = `
+<PanelRow
+  className="tablenav relationship-pagination"
+>
+  <div
+    className="tablenav-pages"
+  >
+    <span
+      className="displaying-num"
+    >
+      42 items
+    </span>
+    <span
+      className="pagination-links"
+    >
+      <span
+        aria-hidden="true"
+        className="tablenav-pages-navspan button disabled"
+      >
+        ‹
+      </span>
+      <span
+        className="screen-reader-text"
+      >
+        Current Page
+      </span>
+      <span
+        className="paging-input"
+        id="table-paging"
+      >
+        <span
+          className="tablenav-paging-text"
+        >
+          1 of 5
+        </span>
+      </span>
+      <button
+        className="next-page button"
+        onClick={[Function]}
+      >
+        <span
+          className="screen-reader-text"
+        >
+          Next page
+        </span>
+        <span
+          aria-hidden="true"
+        >
+          ›
+        </span>
+      </button>
+    </span>
+  </div>
+</PanelRow>
+`;
+
+exports[`<Pagination /> renders as expected if current page is last page 1`] = `
+<PanelRow
+  className="tablenav relationship-pagination"
+>
+  <div
+    className="tablenav-pages"
+  >
+    <span
+      className="displaying-num"
+    >
+      42 items
+    </span>
+    <span
+      className="pagination-links"
+    >
+      <button
+        className="prev-page button"
+        onClick={[Function]}
+      >
+        <span
+          className="screen-reader-text"
+        >
+          Previous page
+        </span>
+        <span
+          aria-hidden="true"
+        >
+          ‹
+        </span>
+      </button>
+      <span
+        className="screen-reader-text"
+      >
+        Current Page
+      </span>
+      <span
+        className="paging-input"
+        id="table-paging"
+      >
+        <span
+          className="tablenav-paging-text"
+        >
+          5 of 5
+        </span>
+      </span>
+      <span
+        aria-hidden="true"
+        className="tablenav-pages-navspan button disabled"
+      >
+        ›
+      </span>
+    </span>
+  </div>
+</PanelRow>
+`;
+
+exports[`<Pagination /> renders as expected if current page is neither first nor last page 1`] = `
+<PanelRow
+  className="tablenav relationship-pagination"
+>
+  <div
+    className="tablenav-pages"
+  >
+    <span
+      className="displaying-num"
+    >
+      42 items
+    </span>
+    <span
+      className="pagination-links"
+    >
+      <button
+        className="prev-page button"
+        onClick={[Function]}
+      >
+        <span
+          className="screen-reader-text"
+        >
+          Previous page
+        </span>
+        <span
+          aria-hidden="true"
+        >
+          ‹
+        </span>
+      </button>
+      <span
+        className="screen-reader-text"
+      >
+        Current Page
+      </span>
+      <span
+        className="paging-input"
+        id="table-paging"
+      >
+        <span
+          className="tablenav-paging-text"
+        >
+          3 of 5
+        </span>
+      </span>
+      <button
+        className="next-page button"
+        onClick={[Function]}
+      >
+        <span
+          className="screen-reader-text"
+        >
+          Next page
+        </span>
+        <span
+          aria-hidden="true"
+        >
+          ›
+        </span>
+      </button>
+    </span>
+  </div>
+</PanelRow>
+`;
+
+exports[`<Pagination /> renders nothing if total number of pages is 0 1`] = `""`;
+
+exports[`<Pagination /> renders nothing if total number of pages is 1 1`] = `""`;

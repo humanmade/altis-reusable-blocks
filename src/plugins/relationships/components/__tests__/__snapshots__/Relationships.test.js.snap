@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Relationships /> initializes state as expected 1`] = `
+Object {
+  "currentPage": 1,
+  "isFetching": false,
+  "relationshipsList": Array [],
+  "totalItems": 0,
+  "totalPages": 0,
+}
+`;
+
+exports[`<Relationships /> renders as expected if fetching 1`] = `
+<Fragment>
+  <WithPluginContext(WithSelect(WithDispatch(PluginSidebarMoreMenuItem)))
+    target="relationships"
+  >
+    Relationships
+  </WithPluginContext(WithSelect(WithDispatch(PluginSidebarMoreMenuItem)))>
+  <WithPluginContext(WithSelect(WithDispatch(PluginSidebar)))
+    name="relationships"
+    title="Relationships"
+  >
+    <ForwardRef(PanelBody)
+      className="altis-reusable-block-relationships__relationships_list"
+    >
+      <Placeholder>
+        <Spinner />
+      </Placeholder>
+      <Pagination
+        currentPage={1}
+        goToNextPage={[Function]}
+        goToPrevPage={[Function]}
+        totalItems={0}
+        totalPages={0}
+      />
+    </ForwardRef(PanelBody)>
+  </WithPluginContext(WithSelect(WithDispatch(PluginSidebar)))>
+</Fragment>
+`;
+
+exports[`<Relationships /> renders as expected with items 1`] = `
+<Fragment>
+  <WithPluginContext(WithSelect(WithDispatch(PluginSidebarMoreMenuItem)))
+    target="relationships"
+  >
+    Relationships
+  </WithPluginContext(WithSelect(WithDispatch(PluginSidebarMoreMenuItem)))>
+  <WithPluginContext(WithSelect(WithDispatch(PluginSidebar)))
+    name="relationships"
+    title="Relationships"
+  >
+    <ForwardRef(PanelBody)
+      className="altis-reusable-block-relationships__relationships_list"
+    >
+      <RelationshipItem
+        id={1}
+        key="1"
+      />
+      <RelationshipItem
+        id={2}
+        key="2"
+      />
+      <RelationshipItem
+        id={3}
+        key="3"
+      />
+      <Pagination
+        currentPage={1}
+        goToNextPage={[Function]}
+        goToPrevPage={[Function]}
+        totalItems={3}
+        totalPages={1}
+      />
+    </ForwardRef(PanelBody)>
+  </WithPluginContext(WithSelect(WithDispatch(PluginSidebar)))>
+</Fragment>
+`;
+
+exports[`<Relationships /> renders as expected with no items 1`] = `
+<Fragment>
+  <WithPluginContext(WithSelect(WithDispatch(PluginSidebarMoreMenuItem)))
+    target="relationships"
+  >
+    Relationships
+  </WithPluginContext(WithSelect(WithDispatch(PluginSidebarMoreMenuItem)))>
+  <WithPluginContext(WithSelect(WithDispatch(PluginSidebar)))
+    name="relationships"
+    title="Relationships"
+  >
+    <ForwardRef(PanelBody)
+      className="altis-reusable-block-relationships__relationships_list"
+    >
+      <PanelRow>
+        No Relationships to Display
+      </PanelRow>
+      <Pagination
+        currentPage={1}
+        goToNextPage={[Function]}
+        goToPrevPage={[Function]}
+        totalItems={0}
+        totalPages={0}
+      />
+    </ForwardRef(PanelBody)>
+  </WithPluginContext(WithSelect(WithDispatch(PluginSidebar)))>
+</Fragment>
+`;

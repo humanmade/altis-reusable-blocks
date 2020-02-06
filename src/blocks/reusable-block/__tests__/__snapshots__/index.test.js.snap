@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`options are as expected 1`] = `
+Object {
+  "category": "common",
+  "description": Any<String>,
+  "edit": [Function],
+  "icon": "controls-repeat",
+  "save": [Function],
+  "supports": Object {
+    "customClassName": false,
+    "html": false,
+    "reusable": false,
+  },
+  "title": Any<String>,
+}
+`;
