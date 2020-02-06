@@ -4,6 +4,7 @@ import {
 	SelectControl,
 	TextControl,
 } from '@wordpress/components';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 
 const Filter = ( {
@@ -16,13 +17,13 @@ const Filter = ( {
 } ) => {
 	const categoriesListOptions = categoriesList
 		? categoriesList.map( ( { id, name } ) => ( {
-			label: name,
+			label: decodeEntities( name ),
 			value: id,
 		} ) )
 		: [];
 
 	if ( categoriesListOptions.length ) {
-		categoriesListOptions.unshift( { label: '-- Select Category --', value: '' } );
+		categoriesListOptions.unshift( { label: __( '-- Select Category --', 'altis' ), value: '' } );
 	}
 
 	return (

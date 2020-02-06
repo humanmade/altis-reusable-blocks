@@ -61,11 +61,16 @@
 			margin-bottom: 16px;
 
 			&__label {
-				margin-right: 0.3rem;
+				margin: 0 4px 0 0;
 			}
 
-			.components-text-control__input {
-				max-width: 25rem;
+			&__field {
+				align-items: center;
+				display: flex;
+			}
+
+			.components-select-control__input {
+				margin: 0 1px;
 			}
 		}
 	}
@@ -84,10 +89,14 @@
 	.block-editor-reusable-blocks-inserter__list,
 	.block-editor-reusable-blocks-inserter__preview {
 		flex: 1;
-		width: 100%;
+		height: 394px;
+		max-height: 50vh;
 		padding: 1rem;
-		overflow: scroll;
-		max-height: 684px;
+		width: 100%;
+	}
+
+	.block-editor-reusable-blocks-inserter__list {
+		overflow-y: scroll;
 	}
 }
 
