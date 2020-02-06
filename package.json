@@ -56,5 +56,10 @@
     "> 2%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "jest": {
+     "transform": {
+        "^.+\\.js$": "babel-jest"
+      }
+  }
 }
