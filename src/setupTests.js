@@ -1,4 +1,4 @@
-const React = require( 'react' );
+import React from 'react';
 
 global.wp = {
 	// The plugin @babel/plugin-transform-react-jsx is configured to use wp.element.createElement as pragma.

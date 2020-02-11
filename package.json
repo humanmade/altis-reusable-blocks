@@ -14,8 +14,6 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-react": "^7.8.3",
     "@humanmade/webpack-helpers": "^0.5.2",
     "@wordpress/api-fetch": "^3.9.0",
     "@wordpress/block-editor": "^3.5.0",
@@ -30,7 +28,6 @@
     "@wordpress/jest-preset-default": "^4.3.0",
     "@wordpress/scripts": "^4.0.0",
     "@wordpress/url": "^2.9.0",
-    "babel-jest": "^25.1.0",
     "chalk": "^2.4.2",
     "concurrently": "^5.1.0",
     "enzyme": "^3.11.0",
@@ -61,10 +58,5 @@
     "> 2%",
     "last 2 versions",
     "not dead"
-  ],
-  "jest": {
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    }
-  }
+  ]
 }
