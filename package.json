@@ -55,7 +55,7 @@
     "lint:js": "eslint ./src",
     "lint:php": "./vendor/bin/phpcs --standard=phpcs.xml.dist",
     "lint:style": "stylelint --config .stylelintrc --ignore-path .stylelintignore '**/*.{css,scss}'",
-    "test:unit": "jest"
+    "test:unit": "wp-scripts test-unit-js"
   },
   "browserslist": [
     "> 2%",
