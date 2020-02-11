@@ -28,6 +28,7 @@
     "@wordpress/jest-preset-default": "^4.3.0",
     "@wordpress/scripts": "^4.0.0",
     "@wordpress/url": "^2.9.0",
+    "babel-jest": "^25.1.0",
     "chalk": "^2.4.2",
     "concurrently": "^5.1.0",
     "enzyme": "^3.11.0",
@@ -58,8 +59,8 @@
     "not dead"
   ],
   "jest": {
-     "transform": {
-        "^.+\\.js$": "babel-jest"
-      }
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
   }
 }
