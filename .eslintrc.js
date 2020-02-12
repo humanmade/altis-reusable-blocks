@@ -89,7 +89,6 @@ module.exports = {
 		{
 			"files": [
 				"**/*.test.js",
-				"**/__mocks__/**/*.js"
 			],
 			...jest.configs.recommended,
 			"env": {
