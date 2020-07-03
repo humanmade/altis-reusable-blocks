@@ -22,7 +22,7 @@ jobs:
       ports:
       - 80
       volumes:
-      - $GITHUB_WORKSPACE:/var/www/html
+      - ${{ github.workspace }}:/var/www/html
     steps:
     - name: Set up container
       run: |
