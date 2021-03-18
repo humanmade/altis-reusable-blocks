@@ -57,7 +57,7 @@ class REST_Endpoint {
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => function() {
-						return current_user_can( 'edit_posts' );
+						return current_user_can( 'read_wp_block' );
 					},
 					'args'                => [
 						'context' => [
