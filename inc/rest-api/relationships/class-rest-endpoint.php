@@ -54,9 +54,12 @@ class REST_Endpoint {
 			$this->rest_base,
 			[
 				[
-					'methods'  => 'GET',
-					'callback' => [ $this, 'get_items' ],
-					'args'     => [
+					'methods'             => 'GET',
+					'callback'            => [ $this, 'get_items' ],
+					'permission_callback' => function() {
+						return current_user_can( 'read_wp_block' );
+					},
+					'args'                => [
 						'context' => [
 							'default'  => 'view',
 						],
@@ -67,7 +70,7 @@ class REST_Endpoint {
 						],
 					],
 				],
-				'schema' => [ $this, 'get_item_schema' ],
+				'schema'                  => [ $this, 'get_item_schema' ],
 			]
 		);
 	}

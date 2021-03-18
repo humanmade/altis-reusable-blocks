@@ -50,10 +50,13 @@ class REST_Endpoint {
 			$this->namespace,
 			$this->rest_base,
 			[
-				'methods'  => 'GET',
-				'callback' => [ $this, 'get_items' ],
-				'schema'   => ( new WP_REST_Blocks_Controller( 'wp_block' ) )->get_item_schema(),
-				'args'     => [
+				'methods'             => 'GET',
+				'callback'            => [ $this, 'get_items' ],
+				'schema'              => ( new WP_REST_Blocks_Controller( 'wp_block' ) )->get_item_schema(),
+				'permission_callback' => function() {
+					return current_user_can( 'read_wp_block' );
+				},
+				'args'                => [
 					'context' => [
 						'default'  => 'view',
 					],
