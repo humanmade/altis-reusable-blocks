@@ -47,7 +47,7 @@ class NamespaceTest extends TestCase {
 			)
 			->andReturn( 'filepath/' );
 
-		Functions\expect( 'Asset_Loader\autoenqueue' )
+		Functions\expect( 'Asset_Loader\enqueue_asset' )
 			->with(
 				'filepath/build/asset-manifest.json',
 				'index.js',
