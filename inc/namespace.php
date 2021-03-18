@@ -32,7 +32,7 @@ function bootstrap() {
  * @return void
  */
 function enqueue_block_editor_assets() {
-	Asset_Loader\autoenqueue(
+	Asset_Loader\enqueue_asset(
 		plugin_dir_path( PLUGIN_FILE ) . 'build/asset-manifest.json',
 		'index.js',
 		[
