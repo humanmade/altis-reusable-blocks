@@ -1,6 +1,6 @@
 {
   "name": "altis-reusable-blocks",
-  "version": "1.0.0",
+  "private": true,
   "description": "Adds functionality to reusable blocks to enhance their usage.",
   "author": "Human Made Inc.",
   "license": "GPL-2.0-or-later",
@@ -14,7 +14,7 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "@humanmade/webpack-helpers": "^0.7.1",
+    "@humanmade/webpack-helpers": "^0.10.2",
     "@wordpress/eslint-plugin": "^3.3.0",
     "chalk": "^2.4.2",
     "concurrently": "^5.0.2",

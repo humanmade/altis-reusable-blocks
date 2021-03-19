@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Altis Reusable Blocks
- * Version: 1.0.0
+ * Version: 0.1.3
  * Description: Adds functionality to reusable blocks to make their usage more robust.
  * Author: Human Made Inc.
  * Author URI: https://humanmade.com
