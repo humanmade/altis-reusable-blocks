@@ -14,7 +14,7 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "@humanmade/webpack-helpers": "^0.7.1",
+    "@humanmade/webpack-helpers": "^0.10.2",
     "@wordpress/eslint-plugin": "^3.3.0",
     "chalk": "^2.4.2",
     "concurrently": "^5.0.2",
