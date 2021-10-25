@@ -22,7 +22,7 @@ function bootstrap() {
 
 	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\insert_reusable_block_post_data', 10, 2 );
 	// Add to allowed blocks. Running a late to ensure that any block whitelist is defined.
-	add_filter( 'allowed_block_types', __NAMESPACE__ . '\\filter_allowed_block_types', 20 );
+	add_filter( 'allowed_block_types_all', __NAMESPACE__ . '\\filter_allowed_block_types', 20 );
 	add_filter( 'register_post_type_args', __NAMESPACE__ . '\\show_wp_block_in_menu', 10, 2 );
 }
 

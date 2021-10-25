@@ -34,7 +34,7 @@ class NamespaceTest extends TestCase {
 		Filters\expectAdded( 'register_post_type_args' )
 			->with( 'Altis\ReusableBlocks\show_wp_block_in_menu', 10, 2 );
 
-		Filters\expectAdded( 'allowed_block_types' )
+		Filters\expectAdded( 'allowed_block_types_all' )
 			->with( 'Altis\ReusableBlocks\filter_allowed_block_types', 20 );
 
 		Testee\bootstrap();
