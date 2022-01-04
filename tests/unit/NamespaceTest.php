@@ -233,8 +233,13 @@ class NamespaceTest extends TestCase {
 			'menu_position' => 24,
 			'menu_icon' => 'dashicons-screenoptions',
 		];
-
-		$this->assertSame( $expected_args, Testee\show_wp_block_in_menu( $args, 'wp_block' ) );
+		
+		$actual_args = Testee\show_wp_block_in_menu( $args, 'wp_block' );
+		
+		foreach ( $expected_args as $key => $value ) {
+			$this->assertArrayHasKey( $key, $actual_args );
+			$this->assertSame( $value, $actual_args[ $key ] );
+		}
 	}
 
 	/**
