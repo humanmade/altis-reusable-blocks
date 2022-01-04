@@ -214,6 +214,8 @@ class NamespaceTest extends TestCase {
 	 * @return void
 	 */
 	public function test_show_wp_block_in_menu_invalid_post_type() {
+		Functions\stubTranslationFunctions();
+
 		$this->assertSame( [], Testee\show_wp_block_in_menu( [], 'post' ) );
 	}
 
@@ -223,6 +225,8 @@ class NamespaceTest extends TestCase {
 	 * @return void
 	 */
 	public function test_show_wp_block_in_menu() {
+		Functions\stubTranslationFunctions();
+
 		$args = [];
 		$expected_args = [
 			'show_in_menu' => true,
