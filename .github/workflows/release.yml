@@ -1,7 +1,7 @@
 on:
-  create:
-  repository_dispatch:
-    types: [release]
+  push:
+    tags:
+      - '*'
 
 name: Create Release
 
@@ -10,11 +10,14 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Create Release
-        uses: technote-space/release-github-actions@v2
+        uses: technote-space/release-github-actions@v7
         with:
           CLEAN_TEST_TAG: true
           CLEAN_TARGETS: .[!.]*,__tests__,src,package.json,yarn.lock,node_modules,tests,*.xml.dist
