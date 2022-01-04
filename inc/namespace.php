@@ -127,6 +127,8 @@ function show_wp_block_in_menu( array $args, string $post_type ) : array {
 	$args['show_in_menu'] = true;
 	$args['menu_position'] = 24;
 	$args['menu_icon'] = 'dashicons-screenoptions';
+	$args['labels']['all_items'] = _x( 'All Reusable Blocks', 'post type menu label for all_items', 'altis' );
+	$args['labels']['name'] = _x( 'Reusable Blocks', 'post type menu label for name', 'altis' );
 
 	return $args;
 }
