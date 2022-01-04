@@ -214,6 +214,8 @@ class NamespaceTest extends TestCase {
 	 * @return void
 	 */
 	public function test_show_wp_block_in_menu_invalid_post_type() {
+		Functions\stubTranslationFunctions();
+
 		$this->assertSame( [], Testee\show_wp_block_in_menu( [], 'post' ) );
 	}
 
@@ -223,14 +225,21 @@ class NamespaceTest extends TestCase {
 	 * @return void
 	 */
 	public function test_show_wp_block_in_menu() {
+		Functions\stubTranslationFunctions();
+
 		$args = [];
 		$expected_args = [
 			'show_in_menu' => true,
 			'menu_position' => 24,
 			'menu_icon' => 'dashicons-screenoptions',
 		];
-
-		$this->assertSame( $expected_args, Testee\show_wp_block_in_menu( $args, 'wp_block' ) );
+		
+		$actual_args = Testee\show_wp_block_in_menu( $args, 'wp_block' );
+		
+		foreach ( $expected_args as $key => $value ) {
+			$this->assertArrayHasKey( $key, $actual_args );
+			$this->assertSame( $value, $actual_args[ $key ] );
+		}
 	}
 
 	/**
