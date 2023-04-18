@@ -10,8 +10,8 @@ use Brain\Monkey\Functions;
 
 class RESTEndpointTest extends TestCase {
 
-	protected function setUp() {
-		parent::setup();
+	protected function set_up() {
+		parent::set_up();
 
 		$this->testee = new Testee();
 	}
