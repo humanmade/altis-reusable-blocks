@@ -4,14 +4,13 @@ namespace Altis\ReusableBlocks\Tests\Unit\REST_API\Search;
 
 use Altis\ReusableBlocks\Tests\Unit\TestCase;
 use Altis\ReusableBlocks\REST_API\Search\REST_Endpoint as Testee;
-use const Altis\ReusableBlocks\BLOCK_POST_TYPE;
 
 use Brain\Monkey\Functions;
 
 class RESTEndpointTest extends TestCase {
 
-	protected function setUp() {
-		parent::setup();
+	protected function set_up() {
+		parent::set_up();
 
 		$this->testee = new Testee();
 	}

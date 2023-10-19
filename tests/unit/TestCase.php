@@ -8,7 +8,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 /**
  * Abstract base class for all unit test case implementations.
  */
-abstract class TestCase extends \PHPUnit\Framework\TestCase {
+abstract class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 
 	use MockeryPHPUnitIntegration;
 
@@ -17,9 +17,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 	 *
 	 * @return void
 	 */
-	protected function setUp() {
+	protected function set_up() {
 
-		parent::setUp();
+		parent::set_up();
 		Monkey\setUp();
 	}
 
@@ -28,9 +28,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 	 *
 	 * @return void
 	 */
-	protected function tearDown() {
+	protected function tear_down() {
 
 		Monkey\tearDown();
-		parent::tearDown();
+		parent::tear_down();
 	}
 }
