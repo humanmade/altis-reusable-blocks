@@ -103,7 +103,7 @@ yarn start
 
 ### Requirements
 
-This plugin requires PHP 7.1 or higher.
+This plugin requires PHP 8.1 or higher.
 
 ### Tests
 
