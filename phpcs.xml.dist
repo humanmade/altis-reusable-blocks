@@ -21,7 +21,7 @@
 	<config name="ignore_warnings_on_exit" value="1"/>
 
 	<!-- Check for PHP cross-version compatibility. -->
-	<config name="testVersion" value="7.1-"/>
+	<config name="testVersion" value="8.1-"/>
 	<rule ref="PHPCompatibility"/>
 
 	<!-- Check against recommended ruleset for usage on the VIP Go platform. -->

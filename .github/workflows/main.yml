@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         php: [8.1, 8.2, 8.3]
-        node: [22]
+        node: [16]
     runs-on: ubuntu-latest
     # each step has a 10 minute budget
     timeout-minutes: 10
@@ -30,18 +30,16 @@ jobs:
         echo "Update package lists."
         apt-get -y update
         echo "Install base packages."
-        apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken build-essential libssl-dev gnupg libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libicu-dev libxml2-dev libonig-dev vim wget unzip git
-        echo "Add yarn package repository."
-        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-        echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+        apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken build-essential libssl-dev gnupg libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libicu-dev libxml2-dev libonig-dev vim wget unzip git curl g++ make
+        echo "Install Node.js from NodeSource."
+        curl -fsSL https://deb.nodesource.com/setup_${{ matrix.node }}.x | bash -
+        apt-get install -y nodejs python3 python3-pip
+        ln -s /usr/bin/python3 /usr/bin/python
+        echo "Add yarn package repository (using modern GPG key method)."
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/yarn-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/yarn-archive-keyring.gpg] https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
         echo "Update package lists."
         apt-get -y update
-        echo "Install NVM."
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-        . ~/.nvm/nvm.sh
-        echo "Install node."
-        nvm install ${{ matrix.node }}
-        nvm use ${{ matrix.node }}
         echo "Install yarn."
         apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew install --fix-missing --fix-broken yarn
         echo "Install composer."
@@ -73,7 +71,7 @@ jobs:
 
     - name: Run yarn install
       run: |
-        yarn install
+        yarn install --ignore-engines
 
     - name: Run composer validate
       run: |
@@ -81,7 +79,7 @@ jobs:
 
     - name: Run composer install
       run: |
-        composer install --prefer-dist --no-progress --no-suggest
+        composer install --prefer-dist --no-progress
 
     - name: Run PHPUnit
       run: |
