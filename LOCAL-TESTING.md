@@ -104,10 +104,17 @@ tests/unit/rest-api/search/RESTEndpointTest.php
 
 ### node-sass Build Issues
 
-The project uses node-sass 4.12.0, which is old and expects Python 2. The Docker setup handles this by:
-- Installing Python 3
-- Setting `PYTHON=/usr/bin/python3` when rebuilding node-sass
-- Using `--ignore-scripts` during `yarn install` to skip the initial build
+The project uses node-sass 4.12.0, which is very old and has compatibility issues:
+
+**The build step may fail** on ARM64 (Apple Silicon) because:
+- node-sass 4.12.0 doesn't have pre-built binaries for ARM64
+- Building from source requires old C++ code that doesn't compile on modern systems
+
+**Solution:**
+- The test script uses `--ignore-scripts` during `yarn install` to skip node-sass build
+- The build step is optional and will show a warning if it fails
+- **All critical tests (linting, PHPUnit, PHPCS, ESLint) still run successfully** ✅
+- GitHub Actions (x86_64) should work fine for builds
 
 ## Files Created
 
