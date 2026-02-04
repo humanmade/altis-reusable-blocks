@@ -1,0 +1,18 @@
+---
+services:
+  ci-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.2}
+        NODE_VERSION: ${NODE_VERSION:-16}
+    container_name: altis-reusable-blocks-ci
+    volumes:
+      - .:/var/www/html
+    environment:
+      - NODE_ENV=development
+    working_dir: /var/www/html
+    command: /bin/bash
+    stdin_open: true
+    tty: true
